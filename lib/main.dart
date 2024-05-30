@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'helpers/sql_helper.dart';
+import 'pages/home_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  var sqlHelper = SqlHelper();
+  await sqlHelper.initDb();
+  if (sqlHelper.db != null) {
+    GetIt.I.registerSingleton<SqlHelper>(sqlHelper);
+  }
+
   runApp(const MainApp());
 }
 
@@ -10,11 +20,8 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+      title: 'Final Project',
+      home: HomePage(),
     );
   }
 }
