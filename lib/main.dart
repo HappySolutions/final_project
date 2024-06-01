@@ -20,6 +20,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Final Project',
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
