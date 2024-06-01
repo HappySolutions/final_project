@@ -51,9 +51,9 @@ class SqlHelper {
         // var factory = databaseFactoryFfiWeb;
         // db = await factory.openDatabase('pos.db');
         var factory = databaseFactoryFfiWeb;
-        var db = await factory.openDatabase('my_db.db');
+        db = await factory.openDatabase('my_db.db');
         var sqliteVersion =
-            (await db.rawQuery('select sqlite_version()')).first.values.first;
+            (await db!.rawQuery('select sqlite_version()')).first.values.first;
 
         print('===================> Db Created and version is $sqliteVersion');
       } else {
