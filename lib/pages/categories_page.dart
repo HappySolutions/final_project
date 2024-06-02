@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_is_empty
+
 import 'package:final_project/helpers/sql_helper.dart';
 import 'package:final_project/models/pos_category.dart';
 import 'package:final_project/pages/categories_ops_page.dart';
@@ -15,49 +17,34 @@ class CategoriesPage extends StatefulWidget {
 class _CategoriesPageState extends State<CategoriesPage> {
   List<PosCategory>? categories;
 
-  final List<PlutoColumn> columns = <PlutoColumn>[
-    PlutoColumn(
-      title: 'Id',
-      field: 'id',
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: 'Name',
-      field: 'name',
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: 'Description',
-      field: 'description',
-      type: PlutoColumnType.text(),
-    ),
-  ];
+  // final List<PlutoColumn> columns = <PlutoColumn>[
+  //   PlutoColumn(
+  //     title: 'Id',
+  //     field: 'id',
+  //     type: PlutoColumnType.text(),
+  //   ),
+  //   PlutoColumn(
+  //     title: 'Name',
+  //     field: 'name',
+  //     type: PlutoColumnType.text(),
+  //   ),
+  //   PlutoColumn(
+  //     title: 'Description',
+  //     field: 'description',
+  //     type: PlutoColumnType.text(),
+  //   ),
+  // ];
 
-  final List<PlutoRow> rows = [
-    PlutoRow(
-      cells: {
-        'id': PlutoCell(value: 'user1'),
-        'name': PlutoCell(value: 'Mike'),
-        'description': PlutoCell(value: '20'),
-      },
-    ),
-    PlutoRow(
-      cells: {
-        'id': PlutoCell(value: 'user2'),
-        'name': PlutoCell(value: 'Jack'),
-        'description': PlutoCell(value: '25'),
-      },
-    ),
-    PlutoRow(
-      cells: {
-        'id': PlutoCell(value: 'user3'),
-        'name': PlutoCell(value: 'Suzi'),
-        'description': PlutoCell(value: '40'),
-      },
-    ),
-  ];
-
-  late final PlutoGridStateManager stateManager;
+  // final List<PlutoRow> rows = [
+  //   PlutoRow(
+  //     cells: {
+  //       'id': PlutoCell(value: 'user1'),
+  //       'name': PlutoCell(value: 'Mike'),
+  //       'description': PlutoCell(value: '20'),
+  //     },
+  //   ),
+  // ];
+  // late final PlutoGridStateManager stateManager;
 
   @override
   void initState() {
@@ -90,11 +77,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
           data: Theme.of(context).copyWith(
             iconTheme: const IconThemeData(color: Colors.black, size: 26),
           ),
-          child: PlutoGrid(
-            columns: columns,
-            rows: rows,
-            configuration: const PlutoGridConfiguration(),
-          ),
+          child: Text(''),
         ),
       ),
     );
