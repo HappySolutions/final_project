@@ -13,6 +13,7 @@ dependencies:
   sqflite_common_ffi_web: '>=0.1.0-dev.1'
   get_it: ^7.7.0
   pluto_grid: ^8.0.0
+  horizontal_data_table: ^4.3.1
 
 dev_dependencies:
   flutter_test:
