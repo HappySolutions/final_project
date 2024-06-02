@@ -55,7 +55,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
             isFixedHeader: true,
             headerWidgets: _getTitleWidget(),
             isFixedFooter: true,
-            footerWidgets: _getTitleWidget(),
             leftSideItemBuilder: _generateFirstColumnRow,
             rightSideItemBuilder: _generateRightHandSideColumnRow,
             itemCount: 1,
