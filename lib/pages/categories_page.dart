@@ -76,7 +76,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   void getCategories() async {
     try {
       var sqlHelper = GetIt.I.get<SqlHelper>();
-      var data = await sqlHelper.db!.query('categories');
+      var data = await sqlHelper.db!.rawQuery('SELECT * FROM categories');
       if (data.isNotEmpty) {
         for (var item in data) {
           categories!.add(PosCategory.fromJson(item));

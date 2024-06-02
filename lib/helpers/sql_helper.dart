@@ -48,10 +48,8 @@ class SqlHelper {
   Future<void> initDb() async {
     try {
       if (kIsWeb) {
-        // var factory = databaseFactoryFfiWeb;
-        // db = await factory.openDatabase('pos.db');
         var factory = databaseFactoryFfiWeb;
-        db = await factory.openDatabase('my_db.db');
+        db = await factory.openDatabase('pos.db');
         var sqliteVersion =
             (await db!.rawQuery('select sqlite_version()')).first.values.first;
 

@@ -40,7 +40,7 @@ class MainApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const CategoriesPage(),
+      home: const HomePage(),
     );
   }
 
