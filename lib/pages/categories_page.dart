@@ -58,7 +58,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
             footerWidgets: _getTitleWidget(),
             leftSideItemBuilder: _generateFirstColumnRow,
             rightSideItemBuilder: _generateRightHandSideColumnRow,
-            itemCount: categories!.length,
+            itemCount: 1,
             rowSeparatorWidget: const Divider(
               color: Colors.black38,
               height: 1.0,
