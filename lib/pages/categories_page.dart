@@ -1,11 +1,12 @@
-// ignore_for_file: prefer_is_empty
+// ignore_for_file: prefer_is_empty, prefer_const_constructors
 
 import 'package:final_project/helpers/sql_helper.dart';
 import 'package:final_project/models/pos_category.dart';
 import 'package:final_project/pages/categories_ops_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:pluto_grid/pluto_grid.dart';
+// import 'package:pluto_grid/pluto_grid.dart';
+import 'package:horizontal_data_table/horizontal_data_table.dart';
 
 class CategoriesPage extends StatefulWidget {
   const CategoriesPage({super.key});
@@ -16,35 +17,6 @@ class CategoriesPage extends StatefulWidget {
 
 class _CategoriesPageState extends State<CategoriesPage> {
   List<PosCategory>? categories;
-
-  // final List<PlutoColumn> columns = <PlutoColumn>[
-  //   PlutoColumn(
-  //     title: 'Id',
-  //     field: 'id',
-  //     type: PlutoColumnType.text(),
-  //   ),
-  //   PlutoColumn(
-  //     title: 'Name',
-  //     field: 'name',
-  //     type: PlutoColumnType.text(),
-  //   ),
-  //   PlutoColumn(
-  //     title: 'Description',
-  //     field: 'description',
-  //     type: PlutoColumnType.text(),
-  //   ),
-  // ];
-
-  // final List<PlutoRow> rows = [
-  //   PlutoRow(
-  //     cells: {
-  //       'id': PlutoCell(value: 'user1'),
-  //       'name': PlutoCell(value: 'Mike'),
-  //       'description': PlutoCell(value: '20'),
-  //     },
-  //   ),
-  // ];
-  // late final PlutoGridStateManager stateManager;
 
   @override
   void initState() {
@@ -77,7 +49,25 @@ class _CategoriesPageState extends State<CategoriesPage> {
           data: Theme.of(context).copyWith(
             iconTheme: const IconThemeData(color: Colors.black, size: 26),
           ),
-          child: Text(''),
+          child: HorizontalDataTable(
+            leftHandSideColumnWidth: 100,
+            rightHandSideColumnWidth: 600,
+            isFixedHeader: true,
+            headerWidgets: _getTitleWidget(),
+            isFixedFooter: true,
+            footerWidgets: _getTitleWidget(),
+            leftSideItemBuilder: _generateFirstColumnRow,
+            rightSideItemBuilder: _generateRightHandSideColumnRow,
+            itemCount: categories!.length,
+            rowSeparatorWidget: const Divider(
+              color: Colors.black38,
+              height: 1.0,
+              thickness: 0.0,
+            ),
+            leftHandSideColBackgroundColor: const Color(0xFFFFFFFF),
+            rightHandSideColBackgroundColor: const Color(0xFFFFFFFF),
+            itemExtent: 55,
+          ),
         ),
       ),
     );
@@ -89,15 +79,70 @@ class _CategoriesPageState extends State<CategoriesPage> {
       var data = await sqlHelper.db!.query('categories');
       if (data.isNotEmpty) {
         for (var item in data) {
-          categories ??= [];
-          categories?.add(PosCategory.fromJson(item));
+          categories!.add(PosCategory.fromJson(item));
         }
       } else {
-        categories = [];
+        categories = [PosCategory(11, 'name', 'description')];
       }
       setState(() {});
     } catch (e) {
       print('=======> error is $e');
     }
+  }
+
+  List<Widget> _getTitleWidget() {
+    return [
+      _getTitleItemWidget('id', 100),
+      _getTitleItemWidget('name', 100),
+      _getTitleItemWidget('description', 200),
+    ];
+  }
+
+  Widget _getTitleItemWidget(String label, double width) {
+    return Container(
+      width: width,
+      height: 56,
+      padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+      alignment: Alignment.centerLeft,
+      child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _generateFirstColumnRow(BuildContext context, int index) {
+    return Container(
+      width: 100,
+      height: 52,
+      padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+      alignment: Alignment.centerLeft,
+      child: const Text('categories![0].name'),
+    );
+  }
+
+  Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
+    return Row(
+      children: <Widget>[
+        Container(
+          width: 200,
+          height: 52,
+          padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.centerLeft,
+          child: Text('categories[index].id'),
+        ),
+        Container(
+          width: 100,
+          height: 52,
+          padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.centerLeft,
+          child: Text('categories[index].name'),
+        ),
+        Container(
+          width: 200,
+          height: 52,
+          padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.centerLeft,
+          child: Text('categories[index].description'),
+        ),
+      ],
+    );
   }
 }

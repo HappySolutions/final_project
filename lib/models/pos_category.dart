@@ -3,7 +3,7 @@ class PosCategory {
   String? name;
   String? description;
 
-  PosCategory();
+  PosCategory(this.id, this.name, this.description);
 
   PosCategory.fromJson(Map<String, dynamic> json) {
     id = json['id'];
