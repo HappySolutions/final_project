@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_is_empty, prefer_const_constructors
+// ignore_for_file: prefer_is_empty, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:final_project/helpers/sql_helper.dart';
 import 'package:final_project/models/pos_category.dart';
@@ -17,37 +17,66 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> {
-  List<PosCategory> categories = <PosCategory>[];
+  // List<PosCategory> categories = <PosCategory>[];
 
-  late CategoriesDataSource categoryDataSource;
+  // late CategoriesDataSource categoryDataSource;
+  bool sort = true;
+  List<PosCategory>? filterData;
+  List<PosCategory> myData = [
+    PosCategory(10001, 'James', 'Project Lead'),
+    PosCategory(10002, 'adam', 'Project Lead'),
+    PosCategory(10003, 'Jon', 'Project Lead'),
+    PosCategory(10004, 'Jan', 'Project Lead'),
+    PosCategory(10005, 'Happyy', 'Project Lead'),
+    PosCategory(10006, 'Happyy', 'Project Lead'),
+    PosCategory(10007, 'Happyy', 'Project Lead'),
+    PosCategory(10008, 'Happyy', 'Project Lead'),
+    PosCategory(10009, 'Happyy', 'Project Lead'),
+    PosCategory(10010, 'Happyy', 'Project Lead'),
+    PosCategory(10011, 'Happyy', 'Project Lead'),
+    PosCategory(10012, 'Happyy', 'Project Lead'),
+    PosCategory(10013, 'Happyy', 'Project Lead'),
+    PosCategory(10014, 'Happyy', 'Project Lead'),
+  ];
+
+  onsortColum(int columnIndex, bool ascending) {
+    if (columnIndex == 0) {
+      if (ascending) {
+        filterData!.sort((a, b) => a.name!.compareTo(b.name!));
+      } else {
+        filterData!.sort((a, b) => b.name!.compareTo(a.name!));
+      }
+    }
+  }
 
   @override
   void initState() {
-    categories = getCategory();
-    categoryDataSource = CategoriesDataSource(categories: categories);
+    // categories = getCategory();
+    // categoryDataSource = CategoriesDataSource(categories: categories);
+    filterData = myData;
 
     getCategories();
     super.initState();
   }
 
-  List<PosCategory> getCategory() {
-    return [
-      PosCategory(10001, 'James', 'Project Lead'),
-      PosCategory(10002, 'adam', 'Project Lead'),
-      PosCategory(10003, 'Jon', 'Project Lead'),
-      PosCategory(10004, 'Jan', 'Project Lead'),
-      PosCategory(10005, 'Happyy', 'Project Lead'),
-      PosCategory(10005, 'Happyy', 'Project Lead'),
-      PosCategory(10005, 'Happyy', 'Project Lead'),
-      PosCategory(10005, 'Happyy', 'Project Lead'),
-      PosCategory(10005, 'Happyy', 'Project Lead'),
-      PosCategory(10005, 'Happyy', 'Project Lead'),
-      PosCategory(10005, 'Happyy', 'Project Lead'),
-      PosCategory(10005, 'Happyy', 'Project Lead'),
-      PosCategory(10005, 'Happyy', 'Project Lead'),
-      PosCategory(10005, 'Happyy', 'Project Lead'),
-    ];
-  }
+  // List<PosCategory> getCategory() {
+  //   return [
+  //     PosCategory(10001, 'James', 'Project Lead'),
+  //     PosCategory(10002, 'adam', 'Project Lead'),
+  //     PosCategory(10003, 'Jon', 'Project Lead'),
+  //     PosCategory(10004, 'Jan', 'Project Lead'),
+  //     PosCategory(10005, 'Happyy', 'Project Lead'),
+  //     PosCategory(10005, 'Happyy', 'Project Lead'),
+  //     PosCategory(10005, 'Happyy', 'Project Lead'),
+  //     PosCategory(10005, 'Happyy', 'Project Lead'),
+  //     PosCategory(10005, 'Happyy', 'Project Lead'),
+  //     PosCategory(10005, 'Happyy', 'Project Lead'),
+  //     PosCategory(10005, 'Happyy', 'Project Lead'),
+  //     PosCategory(10005, 'Happyy', 'Project Lead'),
+  //     PosCategory(10005, 'Happyy', 'Project Lead'),
+  //     PosCategory(10005, 'Happyy', 'Project Lead'),
+  //   ];
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -68,81 +97,154 @@ class _CategoriesPageState extends State<CategoriesPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            iconTheme: const IconThemeData(color: Colors.black, size: 26),
-          ),
-          child: SfDataGrid(
-            columnWidthMode: ColumnWidthMode.auto,
-            rowHeight: 50,
-            rowsPerPage: 5,
-            gridLinesVisibility: GridLinesVisibility.horizontal,
-            source: categoryDataSource,
-            columns: <GridColumn>[
-              GridColumn(
-                  columnName: 'id',
-                  label: Container(
-                      padding: EdgeInsets.all(16.0),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'ID',
-                      ))),
-              GridColumn(
-                  columnName: 'name',
-                  label: Container(
-                      padding: EdgeInsets.all(16.0),
-                      alignment: Alignment.centerLeft,
-                      child: Text('Name'))),
-              GridColumn(
-                  columnName: 'description',
-                  width: 120,
-                  label: Container(
-                      padding: EdgeInsets.all(16.0),
-                      alignment: Alignment.centerLeft,
-                      child: Text('Description'))),
-            ],
-          ),
-          // HorizontalDataTable(
-          //   leftHandSideColumnWidth: 100,
-          //   rightHandSideColumnWidth: 100,
-          //   isFixedHeader: true,
-          //   isFixedFooter: true,
-          //   headerWidgets: _getTitleWidget(),
-          //   leftSideItemBuilder: _generateFirstColumnRow,
-          //   rightSideItemBuilder: _generateRightHandSideColumnRow,
-          //   itemCount: 1,
-          //   rowSeparatorWidget: const Divider(
-          //     color: Colors.black38,
-          //     height: 1.0,
-          //     thickness: 0.0,
-          //   ),
-          //   leftHandSideColBackgroundColor: const Color(0xFFFFFFFF),
-          //   rightHandSideColBackgroundColor: const Color(0xFFFFFFFF),
-          //   itemExtent: 55,
-          // ),
+      body: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Theme.of(context).canvasColor,
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
         ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          SizedBox(
+            width: double.infinity,
+            child: Theme(
+              data: ThemeData.light()
+                  .copyWith(cardColor: Theme.of(context).canvasColor),
+              child: PaginatedDataTable(
+                headingRowColor: WidgetStateProperty.all(Colors.blue),
+                sortColumnIndex: 0,
+                sortAscending: sort,
+                // header: Container(
+                //   padding: const EdgeInsets.all(5),
+                //   decoration: BoxDecoration(
+                //       border: Border.all(
+                //         color: Colors.grey,
+                //       ),
+                //       borderRadius: BorderRadius.circular(12)),
+                //   child: TextField(
+                //     decoration: const InputDecoration(
+                //         hintText: "Enter something to filter"),
+                //     onChanged: (value) {
+                //       setState(() {
+                //         myData = filterData!
+                //             .where((element) => element.name!.contains(value))
+                //             .toList();
+                //       });
+                //     },
+                //   ),
+                // ),
+
+                source: RowSource(
+                  myData: myData,
+                  count: myData.length,
+                ),
+                rowsPerPage: 8,
+                columnSpacing: 8,
+                columns: [
+                  DataColumn(
+                      label: const Text(
+                        "Id",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 14),
+                      ),
+                      onSort: (columnIndex, ascending) {
+                        setState(() {
+                          sort = !sort;
+                        });
+
+                        onsortColum(columnIndex, ascending);
+                      }),
+                  const DataColumn(
+                    label: Text(
+                      "Name",
+                      style:
+                          TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                    ),
+                  ),
+                  const DataColumn(
+                    label: Text(
+                      "Description",
+                      style:
+                          TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ]),
       ),
+
+      // SfDataGrid(
+      //   columnWidthMode: ColumnWidthMode.auto,
+      //   rowHeight: 50,
+      //   rowsPerPage: 5,
+      //   gridLinesVisibility: GridLinesVisibility.horizontal,
+      //   source: categoryDataSource,
+      //   columns: <GridColumn>[
+      //     GridColumn(
+      //         columnName: 'id',
+      //         label: Container(
+      //             padding: EdgeInsets.all(16.0),
+      //             alignment: Alignment.centerLeft,
+      //             child: Text(
+      //               'ID',
+      //             ))),
+      //     GridColumn(
+      //         columnName: 'name',
+      //         label: Container(
+      //             padding: EdgeInsets.all(16.0),
+      //             alignment: Alignment.centerLeft,
+      //             child: Text('Name'))),
+      //     GridColumn(
+      //         columnName: 'description',
+      //         width: 120,
+      //         label: Container(
+      //             padding: EdgeInsets.all(16.0),
+      //             alignment: Alignment.centerLeft,
+      //             child: Text('Description'))),
+      //   ],
+      // ),
+      ////////////////////////////////
+      // HorizontalDataTable(
+      //   leftHandSideColumnWidth: 100,
+      //   rightHandSideColumnWidth: 100,
+      //   isFixedHeader: true,
+      //   isFixedFooter: true,
+      //   headerWidgets: _getTitleWidget(),
+      //   leftSideItemBuilder: _generateFirstColumnRow,
+      //   rightSideItemBuilder: _generateRightHandSideColumnRow,
+      //   itemCount: 1,
+      //   rowSeparatorWidget: const Divider(
+      //     color: Colors.black38,
+      //     height: 1.0,
+      //     thickness: 0.0,
+      //   ),
+      //   leftHandSideColBackgroundColor: const Color(0xFFFFFFFF),
+      //   rightHandSideColBackgroundColor: const Color(0xFFFFFFFF),
+      //   itemExtent: 55,
+      // ),
+
+      //   ),
+      // ),
     );
   }
 
   void getCategories() async {
-    try {
-      var data = await GetIt.I.get<SqlHelper>().db!.query('categories');
-      if (data.isNotEmpty) {
-        for (var item in data) {
-          categories!.add(PosCategory.fromJson(item));
-          print(data);
-          print(categories);
-        }
-      } else {
-        categories = [PosCategory(100, 'test name', 'test description')];
-      }
-      setState(() {});
-    } catch (e) {
-      print('=======> error is $e');
-    }
+    // try {
+    //   var data = await GetIt.I.get<SqlHelper>().db!.query('categories');
+    //   if (data.isNotEmpty) {
+    //     for (var item in data) {
+    //       categories!.add(PosCategory.fromJson(item));
+    //       print(data);
+    //       print(categories);
+    //     }
+    //   } else {
+    //     categories = [PosCategory(100, 'test name', 'test description')];
+    //   }
+    //   setState(() {});
+    // } catch (e) {
+    //   print('=======> error is $e');
+    // }
   }
 
   // List<Widget> _getTitleWidget() {
@@ -209,7 +311,7 @@ class CategoriesDataSource extends DataGridSource {
               DataGridCell<int>(columnName: 'id', value: e.id),
               DataGridCell<String>(columnName: 'name', value: e.name),
               DataGridCell<String>(
-                  columnName: 'designation', value: e.description),
+                  columnName: 'description', value: e.description),
             ]))
         .toList();
   }
@@ -230,4 +332,40 @@ class CategoriesDataSource extends DataGridSource {
       );
     }).toList());
   }
+}
+
+class RowSource extends DataTableSource {
+  var myData;
+  final count;
+  RowSource({
+    required this.myData,
+    required this.count,
+  });
+
+  @override
+  DataRow? getRow(int index) {
+    if (index < rowCount) {
+      return recentFileDataRow(myData![index]);
+    } else
+      return null;
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => count;
+
+  @override
+  int get selectedRowCount => 0;
+}
+
+DataRow recentFileDataRow(var data) {
+  return DataRow(
+    cells: [
+      DataCell(Text(data.id.toString())),
+      DataCell(Text(data.name.toString())),
+      DataCell(Text(data.description.toString())),
+    ],
+  );
 }
