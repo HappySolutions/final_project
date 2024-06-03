@@ -1,3 +1,4 @@
+import 'package:final_project/pages/categories_pag2.dart';
 import 'package:final_project/pages/categories_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -39,7 +40,7 @@ class MainApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const CategoriesPage(),
+      home: const HomePage(),
     );
   }
 

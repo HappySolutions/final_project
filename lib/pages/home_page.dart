@@ -1,3 +1,4 @@
+import 'package:final_project/pages/categories_pag2.dart';
 import 'package:final_project/pages/categories_page.dart';
 import 'package:final_project/widgets/header_item.dart';
 import 'package:flutter/material.dart';
@@ -120,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const CategoriesPage()));
+                                      const CategoriesPage2()));
                         }),
                   ],
                 ),

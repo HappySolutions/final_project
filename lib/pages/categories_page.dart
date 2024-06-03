@@ -5,7 +5,6 @@ import 'package:final_project/models/pos_category.dart';
 import 'package:final_project/pages/categories_ops_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class CategoriesPage extends StatefulWidget {
   const CategoriesPage({super.key});
@@ -131,35 +130,39 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }
 }
 
-class CategoriesDataSource extends DataGridSource {
-  CategoriesDataSource({List<PosCategory>? categories}) {
-    _categories = categories!
-        .map<DataGridRow>((e) => DataGridRow(cells: [
-              DataGridCell<int>(columnName: 'id', value: e.id),
-              DataGridCell<String>(columnName: 'name', value: e.name),
-              DataGridCell<String>(
-                  columnName: 'description', value: e.description),
-            ]))
-        .toList();
-  }
+// class CategoriesDataSource extends DataGridSource {
+//   void Function()? onUpdate;
+//   void Function()? onDelete;
 
-  List<DataGridRow> _categories = [];
+//   CategoriesDataSource(this.onUpdate, this.onDelete,
+//       {List<PosCategory>? categories}) {
+//     _categories = categories!
+//         .map<DataGridRow>((e) => DataGridRow(cells: [
+//               DataGridCell<int>(columnName: 'id', value: e.id),
+//               DataGridCell<String>(columnName: 'name', value: e.name),
+//               DataGridCell<String>(
+//                   columnName: 'description', value: e.description),
+//             ]))
+//         .toList();
+//   }
 
-  @override
-  List<DataGridRow> get rows => _categories;
+//   List<DataGridRow> _categories = [];
 
-  @override
-  DataGridRowAdapter? buildRow(DataGridRow row) {
-    return DataGridRowAdapter(
-        cells: row.getCells().map<Widget>((dataGridCell) {
-      return Container(
-        alignment: Alignment.centerRight,
-        padding: EdgeInsets.all(16.0),
-        child: Text(dataGridCell.value.toString()),
-      );
-    }).toList());
-  }
-}
+//   @override
+//   List<DataGridRow> get rows => _categories;
+
+//   @override
+//   DataGridRowAdapter? buildRow(DataGridRow row) {
+//     return DataGridRowAdapter(
+//         cells: row.getCells().map<Widget>((dataGridCell) {
+//       return Container(
+//         alignment: Alignment.centerRight,
+//         padding: EdgeInsets.all(16.0),
+//         child: Text(dataGridCell.value.toString()),
+//       );
+//     }).toList());
+//   }
+// }
 
 class RowSource extends DataTableSource {
   var myData;
