@@ -64,7 +64,7 @@ class SqlHelper {
         );
       }
     } catch (e) {
-      print('error in create db : ${e}');
+      print('error in create db : $e');
     }
   }
 }
