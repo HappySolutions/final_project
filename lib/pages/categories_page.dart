@@ -46,10 +46,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (ctx) => const CategoriesOpsPage()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (ctx) => CategoriesOpsPage()));
             },
           ),
         ],

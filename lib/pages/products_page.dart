@@ -49,7 +49,7 @@ class _ProductsPageState extends State<ProductsPage> {
             icon: const Icon(Icons.add),
             onPressed: () async {
               var result = await Navigator.push(context,
-                  MaterialPageRoute(builder: (ctx) => const ProductsOpsPage()));
+                  MaterialPageRoute(builder: (ctx) => ProductsOpsPage()));
 
               if (result ?? false) {
                 getProducts();
@@ -95,10 +95,16 @@ class _ProductsPageState extends State<ProductsPage> {
             source: DataSource(
                 products: products,
                 onUpdate: (product) async {
-                  await onUpdate(product);
+                  var result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (ctx) => ProductsOpsPage(product: product)));
+                  if (result ?? false) {
+                    getProducts();
+                  }
                 },
                 onDelete: (product) async {
-                  await onDeleteCategory(product);
+                  await onDeleteProduct(product);
                 }),
           ),
         ),
@@ -106,7 +112,7 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
-  Future<void> onDeleteCategory(PosProduct product) async {
+  Future<void> onDeleteProduct(PosProduct product) async {
     try {
       var dialogResult = await showDialog(
           context: context,
@@ -135,21 +141,6 @@ class _ProductsPageState extends State<ProductsPage> {
             .delete('categories', where: 'id =?', whereArgs: [product.id]);
         getProducts();
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error on deleting category ${product.name}'),
-        backgroundColor: Colors.red,
-      ));
-      print('===============> Error is $e');
-    }
-  }
-
-  Future<void> onUpdate(PosProduct product) async {
-    try {
-      var sqlHelper = GetIt.I.get<SqlHelper>();
-      await sqlHelper.db!
-          .delete('categories', where: 'id =?', whereArgs: [product.id]);
-      getProducts();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error on deleting category ${product.name}'),

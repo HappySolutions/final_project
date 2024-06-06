@@ -82,24 +82,52 @@ class _CategoriesOpsPageState extends State<CategoriesOpsPage> {
 
   Future<void> onSubmit() async {
     try {
-      var sqlHelper = GetIt.I
-          .get<SqlHelper>()
-          .db!
-          .insert('categories', conflictAlgorithm: ConflictAlgorithm.replace, {
-        'name': nameTextFeildController.text,
-        'description': descriptionTextFeildController.text,
-      });
+      var sqlHelper = GetIt.I.get<SqlHelper>();
+      if (formKey.currentState!.validate()) {
+        //Add Category logic
+        if (widget.posCategory == null) {
+          sqlHelper.db!.insert(
+              'categories',
+              conflictAlgorithm: ConflictAlgorithm.replace,
+              {
+                'name': nameTextFeildController.text,
+                'description': descriptionTextFeildController.text,
+              });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.green,
-          content: Text(
-            'Category Added Successfully',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      );
-      Navigator.pop(context, true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.green,
+              content: Text(
+                'Category Added Successfully',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+          Navigator.pop(context, true);
+        } else //update category logic
+        {
+          sqlHelper.db!.update(
+              'categories',
+              {
+                'name': nameTextFeildController.text,
+                'description': descriptionTextFeildController.text,
+              },
+              where: 'id =?',
+              whereArgs: [widget.posCategory?.id]);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.green,
+              content: Text(
+                widget.posCategory == null
+                    ? 'Category added Successfully'
+                    : 'Category updated Successfully',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+          Navigator.pop(context, true);
+        }
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
