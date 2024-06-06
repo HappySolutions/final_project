@@ -131,11 +131,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
 }
 
 // class CategoriesDataSource extends DataGridSource {
-//   void Function()? onUpdate;
-//   void Function()? onDelete;
 
-//   CategoriesDataSource(this.onUpdate, this.onDelete,
-//       {List<PosCategory>? categories}) {
+//   CategoriesDataSource({List<PosCategory>? categories}) {
 //     _categories = categories!
 //         .map<DataGridRow>((e) => DataGridRow(cells: [
 //               DataGridCell<int>(columnName: 'id', value: e.id),

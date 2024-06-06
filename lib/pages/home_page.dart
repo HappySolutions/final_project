@@ -1,5 +1,5 @@
 import 'package:final_project/pages/categories_pag2.dart';
-import 'package:final_project/pages/categories_page.dart';
+import 'package:final_project/pages/products_page.dart';
 import 'package:final_project/widgets/header_item.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -93,15 +93,28 @@ class _HomePageState extends State<HomePage> {
                   crossAxisSpacing: 20,
                   children: [
                     GridViewItem(
-                        label: 'All Sales',
-                        color: Colors.orange,
-                        iconData: Icons.calculate,
-                        onTap: () {}),
+                        label: 'Categories',
+                        color: Colors.yellow,
+                        iconData: Icons.category,
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const CategoriesPage2()));
+                        }),
                     GridViewItem(
                         label: 'Product',
                         color: Colors.pink,
                         iconData: Icons.inventory_2,
-                        onTap: () {}),
+                        onTap: () {
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ProductsPage()));
+                        }),
                     GridViewItem(
                         label: 'Clients',
                         color: Colors.lightBlue,
@@ -113,16 +126,10 @@ class _HomePageState extends State<HomePage> {
                         iconData: Icons.point_of_sale,
                         onTap: () {}),
                     GridViewItem(
-                        label: 'Categories',
-                        color: Colors.yellow,
-                        iconData: Icons.category,
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CategoriesPage2()));
-                        }),
+                        label: 'All Sales',
+                        color: Colors.orange,
+                        iconData: Icons.calculate,
+                        onTap: () {}),
                   ],
                 ),
               ),

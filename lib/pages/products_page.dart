@@ -1,42 +1,40 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:data_table_2/data_table_2.dart';
 import 'package:final_project/helpers/sql_helper.dart';
-import 'package:final_project/models/pos_category.dart';
-import 'package:final_project/pages/categories_ops_page.dart';
+import 'package:final_project/models/pos_product.dart';
+import 'package:final_project/pages/products_ops_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-class CategoriesPage2 extends StatefulWidget {
-  const CategoriesPage2({super.key});
+class ProductsPage extends StatefulWidget {
+  const ProductsPage({super.key});
 
   @override
-  State<CategoriesPage2> createState() => _CategoriesPage2State();
+  State<ProductsPage> createState() => _ProductsPageState();
 }
 
-class _CategoriesPage2State extends State<CategoriesPage2> {
-  List<PosCategory>? categories;
+class _ProductsPageState extends State<ProductsPage> {
+  List<PosProduct>? products;
 
   @override
   void initState() {
-    getCategories();
+    getProducts();
     super.initState();
   }
 
-  void getCategories() async {
+  void getProducts() async {
     try {
       var sqlHelper = GetIt.I.get<SqlHelper>();
-      var data = await sqlHelper.db!.query('categories');
-      categories = [];
+      var data = await sqlHelper.db!.query('products');
+      products = [];
       if (data.isNotEmpty) {
         for (var item in data) {
-          categories?.add(PosCategory.fromJson(item));
+          products?.add(PosProduct.fromJson(item));
         }
       } else {
-        categories = [];
+        products = [];
       }
     } catch (e) {
-      print('Error in get Categories $e');
+      print('Error in get Products $e');
     }
     setState(() {});
   }
@@ -45,16 +43,16 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categories'),
+        title: const Text('Products'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
               var result = await Navigator.push(context,
-                  MaterialPageRoute(builder: (ctx) => CategoriesOpsPage()));
+                  MaterialPageRoute(builder: (ctx) => const ProductsOpsPage()));
 
               if (result ?? false) {
-                getCategories();
+                getProducts();
               }
             },
           ),
@@ -70,7 +68,6 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
             onPageChanged: (index) {
               // print
             },
-            // availableRowsPerPage: const <int>[1],
             hidePaginator: false,
             empty: const Center(
               child: Text('No Data Found'),
@@ -96,19 +93,12 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
               DataColumn(label: Text('Actions')),
             ],
             source: DataSource(
-                categories: categories,
-                onUpdate: (category) async {
-                  var result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (ctx) =>
-                              CategoriesOpsPage(posCategory: category)));
-                  if (result ?? false) {
-                    getCategories();
-                  }
+                products: products,
+                onUpdate: (product) async {
+                  await onUpdate(product);
                 },
-                onDelete: (category) async {
-                  await onDeleteCategory(category);
+                onDelete: (product) async {
+                  await onDeleteCategory(product);
                 }),
           ),
         ),
@@ -116,14 +106,14 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
     );
   }
 
-  Future<void> onDeleteCategory(PosCategory category) async {
+  Future<void> onDeleteCategory(PosProduct product) async {
     try {
       var dialogResult = await showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
                 title:
-                    const Text('Are you Sure you want to delete this category'),
+                    const Text('Are you Sure you want to delete this product'),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -139,55 +129,30 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
                   ),
                 ]);
           });
-
       if (dialogResult ?? false) {
         var sqlHelper = GetIt.I.get<SqlHelper>();
         await sqlHelper.db!
-            .delete('categories', where: 'id =?', whereArgs: [category.id]);
-        getCategories();
+            .delete('categories', where: 'id =?', whereArgs: [product.id]);
+        getProducts();
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error on deleting category ${category.name}'),
+        content: Text('Error on deleting category ${product.name}'),
         backgroundColor: Colors.red,
       ));
       print('===============> Error is $e');
     }
   }
 
-  Future<void> onUpdate(PosCategory category) async {
+  Future<void> onUpdate(PosProduct product) async {
     try {
-      var dialogResult = await showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-                title:
-                    const Text('Are you Sure you want to update this category'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, false);
-                    },
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, true);
-                    },
-                    child: const Text('Update'),
-                  ),
-                ]);
-          });
-
-      if (dialogResult ?? false) {
-        var sqlHelper = GetIt.I.get<SqlHelper>();
-        await sqlHelper.db!
-            .delete('categories', where: 'id =?', whereArgs: [category.id]);
-        getCategories();
-      }
+      var sqlHelper = GetIt.I.get<SqlHelper>();
+      await sqlHelper.db!
+          .delete('categories', where: 'id =?', whereArgs: [product.id]);
+      getProducts();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error on deleting category ${category.name}'),
+        content: Text('Error on deleting category ${product.name}'),
         backgroundColor: Colors.red,
       ));
       print('===============> Error is $e');
@@ -196,26 +161,24 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
 }
 
 class DataSource extends DataTableSource {
-  List<PosCategory>? categories;
-  void Function(PosCategory)? onUpdate;
-  void Function(PosCategory)? onDelete;
+  List<PosProduct>? products;
+  void Function(PosProduct)? onUpdate;
+  void Function(PosProduct)? onDelete;
   DataSource(
-      {required this.categories,
-      required this.onUpdate,
-      required this.onDelete});
+      {required this.products, required this.onUpdate, required this.onDelete});
   @override
   DataRow? getRow(int index) {
     return DataRow2(cells: [
-      DataCell(Text('${categories?[index].id}')),
-      DataCell(Text('${categories?[index].name}')),
-      DataCell(Text('${categories?[index].description}')),
+      DataCell(Text('${products?[index].id}')),
+      DataCell(Text('${products?[index].name}')),
+      DataCell(Text('${products?[index].description}')),
       DataCell(Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              onUpdate!(categories![index]);
+              onUpdate!(products![index]);
             },
           ),
           IconButton(
@@ -224,7 +187,7 @@ class DataSource extends DataTableSource {
               color: Colors.red,
             ),
             onPressed: () {
-              onDelete!(categories![index]);
+              onDelete!(products![index]);
             },
           ),
         ],
@@ -236,7 +199,7 @@ class DataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => categories?.length ?? 0;
+  int get rowCount => products?.length ?? 0;
 
   @override
   int get selectedRowCount => 0;

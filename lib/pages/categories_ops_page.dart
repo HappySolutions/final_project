@@ -9,17 +9,26 @@ import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
 
 class CategoriesOpsPage extends StatefulWidget {
-  final PosCategory? posCategory;
-  const CategoriesOpsPage({this.posCategory, super.key});
+  PosCategory? posCategory;
+  CategoriesOpsPage({this.posCategory, super.key});
 
   @override
   State<CategoriesOpsPage> createState() => _CategoriesOpsPageState();
 }
 
 class _CategoriesOpsPageState extends State<CategoriesOpsPage> {
-  var nameTextFeildController = TextEditingController();
-  var descriptionTextFeildController = TextEditingController();
+  late TextEditingController nameTextFeildController;
+  late TextEditingController descriptionTextFeildController;
   var formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    nameTextFeildController =
+        TextEditingController(text: widget.posCategory?.name ?? '');
+    descriptionTextFeildController =
+        TextEditingController(text: widget.posCategory?.description ?? '');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +99,7 @@ class _CategoriesOpsPageState extends State<CategoriesOpsPage> {
           ),
         ),
       );
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
