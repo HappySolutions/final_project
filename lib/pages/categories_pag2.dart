@@ -154,45 +154,6 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
       print('===============> Error is $e');
     }
   }
-
-  Future<void> onUpdate(PosCategory category) async {
-    try {
-      var dialogResult = await showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-                title:
-                    const Text('Are you Sure you want to update this category'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, false);
-                    },
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, true);
-                    },
-                    child: const Text('Update'),
-                  ),
-                ]);
-          });
-
-      if (dialogResult ?? false) {
-        var sqlHelper = GetIt.I.get<SqlHelper>();
-        await sqlHelper.db!
-            .delete('categories', where: 'id =?', whereArgs: [category.id]);
-        getCategories();
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error on deleting category ${category.name}'),
-        backgroundColor: Colors.red,
-      ));
-      print('===============> Error is $e');
-    }
-  }
 }
 
 class DataSource extends DataTableSource {
