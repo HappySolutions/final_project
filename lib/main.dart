@@ -1,4 +1,3 @@
-import 'package:final_project/pages/categories_ops_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'helpers/sql_helper.dart';

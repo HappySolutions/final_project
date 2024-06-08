@@ -1,4 +1,4 @@
-import 'package:final_project/pages/categories_pag2.dart';
+import 'package:final_project/pages/categories_page.dart';
 import 'package:final_project/pages/products_page.dart';
 import 'package:final_project/widgets/header_item.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool result = false;
-  bool showLoading = false;
+  bool showLoading = true;
   @override
   void initState() {
     init();
@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   void init() async {
     result = await GetIt.I.get<SqlHelper>().createTables();
-    showLoading = true;
+    showLoading = false;
     setState(() {});
   }
 
@@ -43,41 +43,43 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        const Text(
-                          'Easy POS',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 24,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
+                            'Easy POS',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 24,
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: showLoading
-                              ? Transform.scale(
-                                  scale: .5,
-                                  child: const CircularProgressIndicator(
-                                    color: Colors.white,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: showLoading
+                                ? Transform.scale(
+                                    scale: .5,
+                                    child: const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor:
+                                        result ? Colors.green : Colors.red,
                                   ),
-                                )
-                              : CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor:
-                                      result ? Colors.green : Colors.red,
-                                ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    HeaderItem('Exchange Rate', '1USD = 50 Egp'),
-                    HeaderItem('Today\'s Sales', '1100 Egp'),
-                  ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const HeaderItem('Exchange Rate', '1USD = 50 Egp'),
+                      const HeaderItem('Today\'s Sales', '1100 Egp'),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -108,12 +110,10 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.pink,
                         iconData: Icons.inventory_2,
                         onTap: () {
-
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ProductsPage()));
+                                  builder: (context) => const ProductsPage()));
                         }),
                     GridViewItem(
                         label: 'Clients',

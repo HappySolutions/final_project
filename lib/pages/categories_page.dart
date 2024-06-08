@@ -1,196 +1,245 @@
-// ignore_for_file: prefer_is_empty, prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: non_constant_identifier_names
 
+import 'package:data_table_2/data_table_2.dart';
 import 'package:final_project/helpers/sql_helper.dart';
 import 'package:final_project/models/pos_category.dart';
 import 'package:final_project/pages/categories_ops_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({super.key});
+class CategoriesPage2 extends StatefulWidget {
+  const CategoriesPage2({super.key});
 
   @override
-  State<CategoriesPage> createState() => _CategoriesPageState();
+  State<CategoriesPage2> createState() => _CategoriesPage2State();
 }
 
-class _CategoriesPageState extends State<CategoriesPage> {
-  List<PosCategory> myCategories = <PosCategory>[];
-  List<PosCategory>? filteredCategory;
-  bool sort = true;
-
-  onsortColum(int columnIndex, bool ascending) {
-    if (columnIndex == 0) {
-      if (ascending) {
-        filteredCategory!.sort((a, b) => a.name!.compareTo(b.name!));
-      } else {
-        filteredCategory!.sort((a, b) => b.name!.compareTo(a.name!));
-      }
-    }
-  }
+class _CategoriesPage2State extends State<CategoriesPage2> {
+  List<PosCategory>? categories;
 
   @override
   void initState() {
-    filteredCategory = myCategories;
     getCategories();
     super.initState();
+  }
+
+  void getCategories() async {
+    try {
+      var sqlHelper = GetIt.I.get<SqlHelper>();
+      var data = await sqlHelper.db!.query('categories');
+      categories = [];
+      if (data.isNotEmpty) {
+        for (var item in data) {
+          categories?.add(PosCategory.fromJson(item));
+        }
+      } else {
+        categories = [];
+      }
+    } catch (e) {
+      print('Error in get Categories $e');
+    }
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Categories',
-        ),
+        title: const Text('Categories'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(context,
+            onPressed: () async {
+              var result = await Navigator.push(context,
                   MaterialPageRoute(builder: (ctx) => CategoriesOpsPage()));
+
+              if (result ?? false) {
+                getCategories();
+              }
             },
           ),
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          color: Theme.of(context).canvasColor,
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-        ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(
-            width: double.infinity,
-            child: Theme(
-              data: ThemeData.light()
-                  .copyWith(cardColor: Theme.of(context).canvasColor),
-              child: PaginatedDataTable(
-                headingRowColor: WidgetStateProperty.all(Colors.blue),
-                sortColumnIndex: 0,
-                sortAscending: sort,
-                source: RowSource(
-                  myData: myCategories,
-                  count: myCategories.length,
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            TextField(
+              onChanged: (text) async {
+                if (text == '') {
+                  getCategories();
+                  return;
+                }
+                var sqlHelper = await GetIt.I.get<SqlHelper>();
+                var data = await sqlHelper.db!.rawQuery("""
+                  SELECT * From categories
+                  where name like '%$text%' OR description like '%$text%'
+                  """);
+                if (data.isNotEmpty) {
+                  categories = [];
+                  for (var item in data) {
+                    categories?.add(PosCategory.fromJson(item));
+                  }
+                } else {
+                  categories = [];
+                }
+                setState(() {});
+              },
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                border: const OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
                 ),
-                rowsPerPage: 8,
-                columnSpacing: 8,
-                columns: [
-                  DataColumn(
-                      label: const Text(
-                        "Id",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 14),
-                      ),
-                      onSort: (columnIndex, ascending) {
-                        setState(() {
-                          sort = !sort;
-                        });
-
-                        onsortColum(columnIndex, ascending);
-                      }),
-                  const DataColumn(
-                    label: Text(
-                      "Name",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                    ),
-                  ),
-                  const DataColumn(
-                    label: Text(
-                      "Description",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                    ),
-                  ),
-                ],
+                enabledBorder: const OutlineInputBorder(),
+                errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+                labelText: 'Search',
               ),
             ),
-          )
-        ]),
+            const SizedBox(height: 20),
+            Expanded(
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  iconTheme: const IconThemeData(color: Colors.black, size: 26),
+                ),
+                child: PaginatedDataTable2(
+                  onPageChanged: (index) {
+                    // print
+                  },
+                  // availableRowsPerPage: const <int>[1],
+                  hidePaginator: false,
+                  empty: const Center(
+                    child: Text('No Data Found'),
+                  ),
+                  minWidth: 600,
+                  fit: FlexFit.tight,
+                  isHorizontalScrollBarVisible: true,
+                  rowsPerPage: 15,
+                  horizontalMargin: 20,
+                  checkboxHorizontalMargin: 12,
+                  columnSpacing: 20,
+                  wrapInCard: false,
+                  renderEmptyRowsInTheEnd: false,
+                  headingTextStyle:
+                      const TextStyle(color: Colors.white, fontSize: 18),
+                  headingRowColor:
+                      WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                  border: TableBorder.all(color: Colors.black),
+                  columns: const [
+                    DataColumn(label: Text('Id')),
+                    DataColumn(label: Text('Name')),
+                    DataColumn(label: Text('Description')),
+                    DataColumn(label: Text('Actions')),
+                  ],
+                  source: DataSource(
+                      categories: categories,
+                      onUpdate: (category) async {
+                        var result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) =>
+                                    CategoriesOpsPage(posCategory: category)));
+                        if (result ?? false) {
+                          getCategories();
+                        }
+                      },
+                      onDelete: (category) async {
+                        await onDeleteCategory(category);
+                      }),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  void getCategories() async {
+  Future<void> onDeleteCategory(PosCategory category) async {
     try {
-      var data = await GetIt.I.get<SqlHelper>().db!.query('categories');
-      if (data.isNotEmpty) {
-        for (var item in data) {
-          myCategories.add(PosCategory.fromJson(item));
-          print(data);
-          print(myCategories);
-        }
+      var dialogResult = await showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                title:
+                    const Text('Are you Sure you want to delete this category'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                    child: const Text('Delete'),
+                  ),
+                ]);
+          });
+
+      if (dialogResult ?? false) {
+        var sqlHelper = GetIt.I.get<SqlHelper>();
+        await sqlHelper.db!
+            .delete('categories', where: 'id =?', whereArgs: [category.id]);
+        getCategories();
       }
-      setState(() {});
     } catch (e) {
-      print('=======> error is $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error on deleting category ${category.name}'),
+        backgroundColor: Colors.red,
+      ));
+      print('===============> Error is $e');
     }
   }
 }
 
-// class CategoriesDataSource extends DataGridSource {
-
-//   CategoriesDataSource({List<PosCategory>? categories}) {
-//     _categories = categories!
-//         .map<DataGridRow>((e) => DataGridRow(cells: [
-//               DataGridCell<int>(columnName: 'id', value: e.id),
-//               DataGridCell<String>(columnName: 'name', value: e.name),
-//               DataGridCell<String>(
-//                   columnName: 'description', value: e.description),
-//             ]))
-//         .toList();
-//   }
-
-//   List<DataGridRow> _categories = [];
-
-//   @override
-//   List<DataGridRow> get rows => _categories;
-
-//   @override
-//   DataGridRowAdapter? buildRow(DataGridRow row) {
-//     return DataGridRowAdapter(
-//         cells: row.getCells().map<Widget>((dataGridCell) {
-//       return Container(
-//         alignment: Alignment.centerRight,
-//         padding: EdgeInsets.all(16.0),
-//         child: Text(dataGridCell.value.toString()),
-//       );
-//     }).toList());
-//   }
-// }
-
-class RowSource extends DataTableSource {
-  var myData;
-  final count;
-  RowSource({
-    required this.myData,
-    required this.count,
-  });
-
+class DataSource extends DataTableSource {
+  List<PosCategory>? categories;
+  void Function(PosCategory)? onUpdate;
+  void Function(PosCategory)? onDelete;
+  DataSource(
+      {required this.categories,
+      required this.onUpdate,
+      required this.onDelete});
   @override
   DataRow? getRow(int index) {
-    if (index < rowCount) {
-      return recentFileDataRow(myData![index]);
-    } else
-      return null;
+    return DataRow2(cells: [
+      DataCell(Text('${categories?[index].id}')),
+      DataCell(Text('${categories?[index].name}')),
+      DataCell(Text('${categories?[index].description}')),
+      DataCell(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              onUpdate!(categories![index]);
+            },
+          ),
+          IconButton(
+            icon: const Icon(
+              Icons.delete,
+              color: Colors.red,
+            ),
+            onPressed: () {
+              onDelete!(categories![index]);
+            },
+          ),
+        ],
+      )),
+    ]);
   }
 
   @override
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => count;
+  int get rowCount => categories?.length ?? 0;
 
   @override
   int get selectedRowCount => 0;
-}
-
-DataRow recentFileDataRow(var data) {
-  return DataRow(
-    cells: [
-      DataCell(Text(data.id.toString())),
-      DataCell(Text(data.name.toString())),
-      DataCell(Text(data.description.toString())),
-    ],
-  );
 }
