@@ -4,6 +4,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:final_project/helpers/sql_helper.dart';
 import 'package:final_project/models/pos_category.dart';
 import 'package:final_project/pages/categories_ops_page.dart';
+import 'package:final_project/widgets/app_table_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -50,8 +51,10 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
-              var result = await Navigator.push(context,
-                  MaterialPageRoute(builder: (ctx) => CategoriesOpsPage()));
+              var result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (ctx) => const CategoriesOpsPage()));
 
               if (result ?? false) {
                 getCategories();
@@ -70,7 +73,7 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
                   getCategories();
                   return;
                 }
-                var sqlHelper = await GetIt.I.get<SqlHelper>();
+                var sqlHelper = GetIt.I.get<SqlHelper>();
                 var data = await sqlHelper.db!.rawQuery("""
                   SELECT * From categories
                   where name like '%$text%' OR description like '%$text%'
@@ -100,54 +103,28 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: Theme(
-                data: Theme.of(context).copyWith(
-                  iconTheme: const IconThemeData(color: Colors.black, size: 26),
-                ),
-                child: PaginatedDataTable2(
-                  onPageChanged: (index) {
-                    // print
+              child: AppTable(
+                columns: const [
+                  DataColumn(label: Text('Id')),
+                  DataColumn(label: Text('Name')),
+                  DataColumn(label: Text('Description')),
+                  DataColumn(label: Text('Actions')),
+                ],
+                source: CategoriesDataSource(
+                  categories: categories,
+                  onUpdate: (category) async {
+                    var result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) =>
+                                CategoriesOpsPage(posCategory: category)));
+                    if (result ?? false) {
+                      getCategories();
+                    }
                   },
-                  // availableRowsPerPage: const <int>[1],
-                  hidePaginator: false,
-                  empty: const Center(
-                    child: Text('No Data Found'),
-                  ),
-                  minWidth: 600,
-                  fit: FlexFit.tight,
-                  isHorizontalScrollBarVisible: true,
-                  rowsPerPage: 15,
-                  horizontalMargin: 20,
-                  checkboxHorizontalMargin: 12,
-                  columnSpacing: 20,
-                  wrapInCard: false,
-                  renderEmptyRowsInTheEnd: false,
-                  headingTextStyle:
-                      const TextStyle(color: Colors.white, fontSize: 18),
-                  headingRowColor:
-                      WidgetStatePropertyAll(Theme.of(context).primaryColor),
-                  border: TableBorder.all(color: Colors.black),
-                  columns: const [
-                    DataColumn(label: Text('Id')),
-                    DataColumn(label: Text('Name')),
-                    DataColumn(label: Text('Description')),
-                    DataColumn(label: Text('Actions')),
-                  ],
-                  source: DataSource(
-                      categories: categories,
-                      onUpdate: (category) async {
-                        var result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) =>
-                                    CategoriesOpsPage(posCategory: category)));
-                        if (result ?? false) {
-                          getCategories();
-                        }
-                      },
-                      onDelete: (category) async {
-                        await onDeleteCategory(category);
-                      }),
+                  onDelete: (category) async {
+                    await onDeleteCategory(category);
+                  },
                 ),
               ),
             ),
@@ -197,11 +174,11 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
   }
 }
 
-class DataSource extends DataTableSource {
+class CategoriesDataSource extends DataTableSource {
   List<PosCategory>? categories;
   void Function(PosCategory)? onUpdate;
   void Function(PosCategory)? onDelete;
-  DataSource(
+  CategoriesDataSource(
       {required this.categories,
       required this.onUpdate,
       required this.onDelete});

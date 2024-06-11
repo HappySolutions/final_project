@@ -23,8 +23,10 @@ class SqlHelper {
       price double,
       stock integer,
       isAvaliable boolean,
-      image blob,
-      categoryId integer
+      image text,
+      categoryId integer,
+      foreign key (categoryId) REFERENCES categories(id)
+      ON DELETE RESTRICT
       )""");
       batch.execute("""
       Create table If not exists clients(

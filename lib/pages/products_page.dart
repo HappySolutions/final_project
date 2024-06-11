@@ -2,6 +2,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:final_project/helpers/sql_helper.dart';
 import 'package:final_project/models/pos_product.dart';
 import 'package:final_project/pages/products_ops_page.dart';
+import 'package:final_project/widgets/app_table_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -24,7 +25,13 @@ class _ProductsPageState extends State<ProductsPage> {
   void getProducts() async {
     try {
       var sqlHelper = GetIt.I.get<SqlHelper>();
-      var data = await sqlHelper.db!.query('products');
+      var data = await sqlHelper.db!.rawQuery("""
+      Select P.*, C.name as categoryName, C.description as categoryDescription from products P
+      Inner JOIN categories C
+      On P.categoryId = C.id
+      
+      
+      """);
       products = [];
       if (data.isNotEmpty) {
         for (var item in data) {
@@ -42,74 +49,54 @@ class _ProductsPageState extends State<ProductsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Products'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              var result = await Navigator.push(context,
-                  MaterialPageRoute(builder: (ctx) => ProductsOpsPage()));
+        appBar: AppBar(
+          title: const Text('Products'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () async {
+                var result = await Navigator.push(context,
+                    MaterialPageRoute(builder: (ctx) => const ProductsOpsPage()));
 
-              if (result ?? false) {
-                getProducts();
-              }
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            iconTheme: const IconThemeData(color: Colors.black, size: 26),
-          ),
-          child: PaginatedDataTable2(
-            onPageChanged: (index) {
-              // print
-            },
-            hidePaginator: false,
-            empty: const Center(
-              child: Text('No Data Found'),
+                if (result ?? false) {
+                  getProducts();
+                }
+              },
             ),
-            minWidth: 600,
-            fit: FlexFit.tight,
-            isHorizontalScrollBarVisible: true,
-            rowsPerPage: 15,
-            horizontalMargin: 20,
-            checkboxHorizontalMargin: 12,
-            columnSpacing: 20,
-            wrapInCard: false,
-            renderEmptyRowsInTheEnd: false,
-            headingTextStyle:
-                const TextStyle(color: Colors.white, fontSize: 18),
-            headingRowColor:
-                WidgetStatePropertyAll(Theme.of(context).primaryColor),
-            border: TableBorder.all(color: Colors.black),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(20),
+          child: AppTable(
             columns: const [
               DataColumn(label: Text('Id')),
               DataColumn(label: Text('Name')),
               DataColumn(label: Text('Description')),
+              DataColumn(label: Text('Price')),
+              DataColumn(label: Text('Stock')),
+              DataColumn(label: Text('isAvailable')),
+              DataColumn(label: Text('Image')),
+              DataColumn(label: Text('Cat Name')),
+              DataColumn(label: Text('Cat Description')),
               DataColumn(label: Text('Actions')),
             ],
-            source: DataSource(
-                products: products,
-                onUpdate: (product) async {
-                  var result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (ctx) => ProductsOpsPage(product: product)));
-                  if (result ?? false) {
-                    getProducts();
-                  }
-                },
-                onDelete: (product) async {
-                  await onDeleteProduct(product);
-                }),
+            source: ProductsDataSource(
+              products: products,
+              onUpdate: (product) async {
+                var result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (ctx) => ProductsOpsPage(product: product)));
+                if (result ?? false) {
+                  getProducts();
+                }
+              },
+              onDelete: (product) async {
+                await onDeleteProduct(product);
+              },
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Future<void> onDeleteProduct(PosProduct product) async {
@@ -151,11 +138,11 @@ class _ProductsPageState extends State<ProductsPage> {
   }
 }
 
-class DataSource extends DataTableSource {
+class ProductsDataSource extends DataTableSource {
   List<PosProduct>? products;
   void Function(PosProduct)? onUpdate;
   void Function(PosProduct)? onDelete;
-  DataSource(
+  ProductsDataSource(
       {required this.products, required this.onUpdate, required this.onDelete});
   @override
   DataRow? getRow(int index) {
@@ -163,6 +150,12 @@ class DataSource extends DataTableSource {
       DataCell(Text('${products?[index].id}')),
       DataCell(Text('${products?[index].name}')),
       DataCell(Text('${products?[index].description}')),
+      DataCell(Text('${products?[index].price}')),
+      DataCell(Text('${products?[index].stock}')),
+      DataCell(Text('${products?[index].isAvailable}')),
+      DataCell(Text('${products?[index].image}')),
+      DataCell(Text('${products?[index].categoryName}')),
+      DataCell(Text('${products?[index].categoryDescription}')),
       DataCell(Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
