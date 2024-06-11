@@ -5,9 +5,21 @@ import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 class SqlHelper {
   Database? db;
 
+  Future<void> registerForeignKeys() async {
+    await db!.rawQuery('PRAGMA foreign_keys = on');
+    var result = await db!.rawQuery('PRAGMA foreign_keys');
+    print(result);
+  }
+
   Future<bool> createTables() async {
     try {
+      await registerForeignKeys();
+
       var batch = db!.batch();
+
+      batch.rawQuery("""
+      PRAGMA foreign_keys
+      """);
 
       batch.execute("""
       Create table If not exists categories(
@@ -35,6 +47,24 @@ class SqlHelper {
       email text,
       phone text,
       address text
+      )""");
+      batch.execute("""
+      Create table If not exists orders(
+      id integer primary key,
+      label text,
+      totalPrice real,
+      discount real,
+      clientId integer,
+      foreign key (clientId) REFERENCES clients(id)
+      ON DELETE RESTRICT
+      )""");
+      batch.execute("""
+      Create table If not exists orderProductItems(
+      orderId integer,
+      productCount integer,
+      productId integer,
+      foreign key (productId) REFERENCES products(id)
+      ON DELETE RESTRICT
       )""");
 
       var result = await batch.commit();

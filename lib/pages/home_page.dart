@@ -1,4 +1,6 @@
+import 'package:final_project/pages/all_sales_page.dart';
 import 'package:final_project/pages/categories_page.dart';
+import 'package:final_project/pages/clients_page.dart';
 import 'package:final_project/pages/products_page.dart';
 import 'package:final_project/widgets/header_item.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +121,12 @@ class _HomePageState extends State<HomePage> {
                         label: 'Clients',
                         color: Colors.lightBlue,
                         iconData: Icons.groups,
-                        onTap: () {}),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ClientsPage()));
+                        }),
                     GridViewItem(
                         label: 'New Sale',
                         color: Colors.green,
@@ -129,7 +136,12 @@ class _HomePageState extends State<HomePage> {
                         label: 'All Sales',
                         color: Colors.orange,
                         iconData: Icons.calculate,
-                        onTap: () {}),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const AllSalesPage()));
+                        }),
                   ],
                 ),
               ),

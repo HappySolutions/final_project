@@ -1,43 +1,41 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:data_table_2/data_table_2.dart';
 import 'package:final_project/helpers/sql_helper.dart';
-import 'package:final_project/models/pos_category.dart';
-import 'package:final_project/pages/categories_ops_page.dart';
+import 'package:final_project/models/client.dart';
+import 'package:final_project/pages/clients_ops_page.dart';
 import 'package:final_project/widgets/app_table_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-class CategoriesPage2 extends StatefulWidget {
-  const CategoriesPage2({super.key});
+class ClientsPage extends StatefulWidget {
+  const ClientsPage({super.key});
 
   @override
-  State<CategoriesPage2> createState() => _CategoriesPage2State();
+  State<ClientsPage> createState() => _ClientsPageState();
 }
 
-class _CategoriesPage2State extends State<CategoriesPage2> {
-  List<PosCategory>? categories;
+class _ClientsPageState extends State<ClientsPage> {
+  List<Client>? clients;
 
   @override
   void initState() {
-    getCategories();
+    getClients();
     super.initState();
   }
 
-  void getCategories() async {
+  void getClients() async {
     try {
       var sqlHelper = GetIt.I.get<SqlHelper>();
-      var data = await sqlHelper.db!.query('categories');
-      categories = [];
+      var data = await sqlHelper.db!.query('clients');
+      clients = [];
       if (data.isNotEmpty) {
         for (var item in data) {
-          categories?.add(PosCategory.fromJson(item));
+          clients?.add(Client.fromJson(item));
         }
       } else {
-        categories = [];
+        clients = [];
       }
     } catch (e) {
-      print('Error in get Categories $e');
+      print('Error in get Clients $e');
     }
     setState(() {});
   }
@@ -46,18 +44,16 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categories'),
+        title: const Text('Clients'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
-              var result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (ctx) => const CategoriesOpsPage()));
+              var result = await Navigator.push(context,
+                  MaterialPageRoute(builder: (ctx) => const ClientsOpsPage()));
 
               if (result ?? false) {
-                getCategories();
+                getClients();
               }
             },
           ),
@@ -70,21 +66,21 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
             TextField(
               onChanged: (text) async {
                 if (text == '') {
-                  getCategories();
+                  getClients();
                   return;
                 }
                 var sqlHelper = GetIt.I.get<SqlHelper>();
                 var data = await sqlHelper.db!.rawQuery("""
-                  SELECT * From categories
-                  where name like '%$text%' OR description like '%$text%'
+                  SELECT * From clients
+                  where name like '%$text%' OR address like '%$text%'
                   """);
                 if (data.isNotEmpty) {
-                  categories = [];
+                  clients = [];
                   for (var item in data) {
-                    categories?.add(PosCategory.fromJson(item));
+                    clients?.add(Client.fromJson(item));
                   }
                 } else {
-                  categories = [];
+                  clients = [];
                 }
                 setState(() {});
               },
@@ -107,23 +103,23 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
                 columns: const [
                   DataColumn(label: Text('Id')),
                   DataColumn(label: Text('Name')),
-                  DataColumn(label: Text('Description')),
-                  DataColumn(label: Text('Actions')),
+                  DataColumn(label: Text('Address')),
+                  DataColumn(label: Text('Phone')),
+                  DataColumn(label: Text('Email')),
                 ],
-                source: CategoriesDataSource(
-                  categories: categories,
-                  onUpdate: (category) async {
+                source: ClientsDataSource(
+                  clients: clients,
+                  onUpdate: (client) async {
                     var result = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (ctx) =>
-                                CategoriesOpsPage(posCategory: category)));
+                            builder: (ctx) => ClientsOpsPage(client: client)));
                     if (result ?? false) {
-                      getCategories();
+                      getClients();
                     }
                   },
-                  onDelete: (category) async {
-                    await onDeleteCategory(category);
+                  onDelete: (client) async {
+                    await onDeleteCategory(client);
                   },
                 ),
               ),
@@ -134,14 +130,14 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
     );
   }
 
-  Future<void> onDeleteCategory(PosCategory category) async {
+  Future<void> onDeleteCategory(Client client) async {
     try {
       var dialogResult = await showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
                 title:
-                    const Text('Are you Sure you want to delete this category'),
+                    const Text('Are you Sure you want to delete this client'),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -161,13 +157,13 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
       if (dialogResult ?? false) {
         var sqlHelper = GetIt.I.get<SqlHelper>();
         await sqlHelper.db!
-            .delete('categories', where: 'id =?', whereArgs: [category.id]);
-        getCategories();
+            .delete('clients', where: 'id =?', whereArgs: [client.id]);
+        getClients();
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-            'Error on deleting category ${category.name} this category may contain related products'),
+            'Error on deleting client ${client.name} this client may have recent order'),
         backgroundColor: Colors.red,
       ));
       print('===============> Error is $e');
@@ -175,27 +171,27 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
   }
 }
 
-class CategoriesDataSource extends DataTableSource {
-  List<PosCategory>? categories;
-  void Function(PosCategory)? onUpdate;
-  void Function(PosCategory)? onDelete;
-  CategoriesDataSource(
-      {required this.categories,
-      required this.onUpdate,
-      required this.onDelete});
+class ClientsDataSource extends DataTableSource {
+  List<Client>? clients;
+  void Function(Client)? onUpdate;
+  void Function(Client)? onDelete;
+  ClientsDataSource(
+      {required this.clients, required this.onUpdate, required this.onDelete});
   @override
   DataRow? getRow(int index) {
     return DataRow2(cells: [
-      DataCell(Text('${categories?[index].id}')),
-      DataCell(Text('${categories?[index].name}')),
-      DataCell(Text('${categories?[index].description}')),
+      DataCell(Text('${clients?[index].id}')),
+      DataCell(Text('${clients?[index].name}')),
+      DataCell(Text('${clients?[index].email}')),
+      DataCell(Text('${clients?[index].phone}')),
+      DataCell(Text('${clients?[index].address}')),
       DataCell(Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              onUpdate!(categories![index]);
+              onUpdate!(clients![index]);
             },
           ),
           IconButton(
@@ -204,7 +200,7 @@ class CategoriesDataSource extends DataTableSource {
               color: Colors.red,
             ),
             onPressed: () {
-              onDelete!(categories![index]);
+              onDelete!(clients![index]);
             },
           ),
         ],
@@ -216,7 +212,7 @@ class CategoriesDataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => categories?.length ?? 0;
+  int get rowCount => clients?.length ?? 0;
 
   @override
   int get selectedRowCount => 0;

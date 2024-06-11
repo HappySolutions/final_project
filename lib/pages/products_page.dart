@@ -32,8 +32,9 @@ class _ProductsPageState extends State<ProductsPage> {
       
       
       """);
-      products = [];
       if (data.isNotEmpty) {
+        products = [];
+
         for (var item in data) {
           products?.add(PosProduct.fromJson(item));
         }
@@ -55,8 +56,10 @@ class _ProductsPageState extends State<ProductsPage> {
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: () async {
-                var result = await Navigator.push(context,
-                    MaterialPageRoute(builder: (ctx) => const ProductsOpsPage()));
+                var result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (ctx) => const ProductsOpsPage()));
 
                 if (result ?? false) {
                   getProducts();
@@ -67,34 +70,78 @@ class _ProductsPageState extends State<ProductsPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(20),
-          child: AppTable(
-            columns: const [
-              DataColumn(label: Text('Id')),
-              DataColumn(label: Text('Name')),
-              DataColumn(label: Text('Description')),
-              DataColumn(label: Text('Price')),
-              DataColumn(label: Text('Stock')),
-              DataColumn(label: Text('isAvailable')),
-              DataColumn(label: Text('Image')),
-              DataColumn(label: Text('Cat Name')),
-              DataColumn(label: Text('Cat Description')),
-              DataColumn(label: Text('Actions')),
+          child: Column(
+            children: [
+              TextField(
+                onChanged: (text) async {
+                  if (text == '') {
+                    getProducts();
+                    return;
+                  }
+                  var sqlHelper = GetIt.I.get<SqlHelper>();
+                  var data = await sqlHelper.db!.rawQuery("""
+                  SELECT * From products
+                  where name like '%$text%' OR description like '%$text%'
+                  """);
+                  if (data.isNotEmpty) {
+                    products = [];
+                    for (var item in data) {
+                      products?.add(PosProduct.fromJson(item));
+                    }
+                  } else {
+                    products = [];
+                  }
+                  setState(() {});
+                },
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.search),
+                  border: const OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Theme.of(context).primaryColor),
+                  ),
+                  enabledBorder: const OutlineInputBorder(),
+                  errorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red),
+                  ),
+                  labelText: 'Search',
+                ),
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: AppTable(
+                  minWidth: 1100,
+                  columns: const [
+                    DataColumn(label: Text('Id')),
+                    DataColumn(label: Text('Name')),
+                    DataColumn(label: Text('Description')),
+                    DataColumn(label: Text('Price')),
+                    DataColumn(label: Text('Stock')),
+                    DataColumn(label: Text('isAvailable')),
+                    DataColumn(label: Text('Image')),
+                    DataColumn(label: Text('Cat Name')),
+                    DataColumn(label: Text('Cat Description')),
+                    DataColumn(label: Text('Actions')),
+                  ],
+                  source: ProductsDataSource(
+                    products: products,
+                    onUpdate: (product) async {
+                      var result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) =>
+                                  ProductsOpsPage(product: product)));
+                      if (result ?? false) {
+                        getProducts();
+                      }
+                    },
+                    onDelete: (product) async {
+                      await onDeleteProduct(product);
+                    },
+                  ),
+                ),
+              ),
             ],
-            source: ProductsDataSource(
-              products: products,
-              onUpdate: (product) async {
-                var result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (ctx) => ProductsOpsPage(product: product)));
-                if (result ?? false) {
-                  getProducts();
-                }
-              },
-              onDelete: (product) async {
-                await onDeleteProduct(product);
-              },
-            ),
           ),
         ));
   }
@@ -153,7 +200,7 @@ class ProductsDataSource extends DataTableSource {
       DataCell(Text('${products?[index].price}')),
       DataCell(Text('${products?[index].stock}')),
       DataCell(Text('${products?[index].isAvailable}')),
-      DataCell(Text('${products?[index].image}')),
+      DataCell(Center(child: Image.network(products?[index].image ?? ''))),
       DataCell(Text('${products?[index].categoryName}')),
       DataCell(Text('${products?[index].categoryDescription}')),
       DataCell(Row(

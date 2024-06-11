@@ -18,8 +18,9 @@ class PosProduct {
     description = json['description'];
     price = json['price'];
     stock = json['stock'];
-    isAvailable = json['isAvailable'];
+    isAvailable = json['isAvaliable'] == 1 ? true : false;
     image = json['image'];
+    categoryId = json['categoryId'];
     categoryName = json['categoryName'];
     categoryDescription = json['categoryDescription'];
   }
@@ -31,8 +32,9 @@ class PosProduct {
       'description': description,
       'price': price,
       'stock': stock,
-      'isAvailable': isAvailable,
+      'isAvaliable': isAvailable,
       'image': image,
+      'categoryId': categoryId,
       'categoryName': categoryName,
       'categoryDescription': categoryDescription,
     };

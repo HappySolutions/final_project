@@ -4,6 +4,7 @@ import 'package:final_project/widgets/app_eleveted_button.dart';
 import 'package:final_project/widgets/app_text_form_feild.dart';
 import 'package:final_project/widgets/categories_drop_down_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -97,6 +98,10 @@ class _ProductsOpsPageState extends State<ProductsOpsPage> {
                   children: [
                     Expanded(
                       child: AppTextFormFeild(
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
                         labelText: 'Price',
                         controller: priceTextFeildController,
                         validator: (value) {
@@ -110,6 +115,10 @@ class _ProductsOpsPageState extends State<ProductsOpsPage> {
                     const SizedBox(width: 20),
                     Expanded(
                       child: AppTextFormFeild(
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
                         labelText: 'Stock',
                         controller: stockTextFeildController,
                         validator: (value) {
@@ -126,7 +135,11 @@ class _ProductsOpsPageState extends State<ProductsOpsPage> {
                   height: 20,
                 ),
                 CategoriesDropDown(
-                  onChanged: (value) {},
+                  selectedValue: selectedCategoryId,
+                  onChanged: (value) {
+                    selectedCategoryId = value;
+                    setState(() {});
+                  },
                 ),
                 const SizedBox(
                   height: 20,
@@ -136,8 +149,12 @@ class _ProductsOpsPageState extends State<ProductsOpsPage> {
                     const Text('Is product availbale'),
                     const SizedBox(width: 10),
                     Switch(
-                      value: false,
-                      onChanged: (value) {},
+                      value: isAvailable ?? false,
+                      onChanged: (value) {
+                        setState(() {
+                          isAvailable = value;
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -170,6 +187,11 @@ class _ProductsOpsPageState extends State<ProductsOpsPage> {
               {
                 'name': nameTextFeildController.text,
                 'description': descriptionTextFeildController.text,
+                'price': double.parse(priceTextFeildController.text),
+                'stock': double.parse(stockTextFeildController.text),
+                'image': imageTextFeildController.text,
+                'categoryId': selectedCategoryId,
+                'isAvaliable': isAvailable ?? false,
               });
 
           ScaffoldMessenger.of(context).showSnackBar(
@@ -189,6 +211,11 @@ class _ProductsOpsPageState extends State<ProductsOpsPage> {
               {
                 'name': nameTextFeildController.text,
                 'description': descriptionTextFeildController.text,
+                'price': double.parse(priceTextFeildController.text),
+                'stock': double.parse(stockTextFeildController.text),
+                'image': imageTextFeildController.text,
+                'categoryId': selectedCategoryId,
+                'isAvaliable': isAvailable ?? false,
               },
               where: 'id =?',
               whereArgs: [widget.product?.id]);

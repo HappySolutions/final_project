@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 class AppTable extends StatelessWidget {
   final List<DataColumn> columns;
   final DataTableSource source;
-  const AppTable({required this.columns, required this.source, super.key});
+  double minWidth;
+  AppTable(
+      {required this.columns,
+      required this.source,
+      this.minWidth = 600,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +25,7 @@ class AppTable extends StatelessWidget {
         empty: const Center(
           child: Text('No Data Found'),
         ),
-        minWidth: 600,
+        minWidth: minWidth,
         fit: FlexFit.tight,
         isHorizontalScrollBarVisible: true,
         rowsPerPage: 15,
