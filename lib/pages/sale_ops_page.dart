@@ -307,8 +307,8 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
           .insert('orders', conflictAlgorithm: ConflictAlgorithm.replace, {
         'label': orderLabel,
         'totalPrice': calcualteTotalPrice,
-        'dicount': 0,
-        'clientId': 1,
+        'discount': 0,
+        'clientId': selectedClientId,
       });
       var batch = sqlHelper.db!.batch();
 
