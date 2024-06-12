@@ -1,6 +1,7 @@
 import 'package:final_project/pages/all_sales_page.dart';
 import 'package:final_project/pages/categories_page.dart';
 import 'package:final_project/pages/clients_page.dart';
+import 'package:final_project/pages/sale_ops_page.dart';
 import 'package:final_project/pages/products_page.dart';
 import 'package:final_project/widgets/header_item.dart';
 import 'package:flutter/material.dart';
@@ -38,53 +39,58 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(),
       body: Column(
         children: [
-          Expanded(
-            child: Container(
-              color: Theme.of(context).primaryColor,
-              height: (MediaQuery.of(context).size.height / 3),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Row(
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  color: Theme.of(context).primaryColor,
+                  height: (MediaQuery.of(context).size.height / 3),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 30),
+                    child: SingleChildScrollView(
+                      child: Column(
                         children: [
-                          const Text(
-                            'Easy POS',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 24,
-                            ),
+                          Row(
+                            children: [
+                              const Text(
+                                'Easy POS',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 24,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: showLoading
+                                    ? Transform.scale(
+                                        scale: .5,
+                                        child: const CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 10,
+                                        backgroundColor:
+                                            result ? Colors.green : Colors.red,
+                                      ),
+                              ),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: showLoading
-                                ? Transform.scale(
-                                    scale: .5,
-                                    child: const CircularProgressIndicator(
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : CircleAvatar(
-                                    radius: 10,
-                                    backgroundColor:
-                                        result ? Colors.green : Colors.red,
-                                  ),
+                          const SizedBox(
+                            height: 20,
                           ),
+                          const HeaderItem('Exchange Rate', '1USD = 50 Egp'),
+                          const HeaderItem('Today\'s Sales', '1100 Egp'),
                         ],
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const HeaderItem('Exchange Rate', '1USD = 50 Egp'),
-                      const HeaderItem('Today\'s Sales', '1100 Egp'),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
           Expanded(
             child: Container(
@@ -131,7 +137,12 @@ class _HomePageState extends State<HomePage> {
                         label: 'New Sale',
                         color: Colors.green,
                         iconData: Icons.point_of_sale,
-                        onTap: () {}),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SaleOpsPage()));
+                        }),
                     GridViewItem(
                         label: 'All Sales',
                         color: Colors.orange,

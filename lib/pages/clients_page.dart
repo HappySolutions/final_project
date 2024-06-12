@@ -100,12 +100,14 @@ class _ClientsPageState extends State<ClientsPage> {
             const SizedBox(height: 20),
             Expanded(
               child: AppTable(
+                minWidth: 800,
                 columns: const [
                   DataColumn(label: Text('Id')),
                   DataColumn(label: Text('Name')),
-                  DataColumn(label: Text('Address')),
-                  DataColumn(label: Text('Phone')),
                   DataColumn(label: Text('Email')),
+                  DataColumn(label: Text('Phone')),
+                  DataColumn(label: Text('Address')),
+                  DataColumn(label: Text('Actions')),
                 ],
                 source: ClientsDataSource(
                   clients: clients,

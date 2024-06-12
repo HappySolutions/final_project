@@ -44,69 +44,71 @@ class _ClientsOpsPageState extends State<ClientsOpsPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: [
-              AppTextFormFeild(
-                labelText: 'name',
-                controller: nameTextFeildController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please Enter valid name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              AppTextFormFeild(
-                labelText: 'address',
-                controller: addressTextFeildController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please Enter valid address';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              AppTextFormFeild(
-                labelText: 'email',
-                controller: emailTextFeildController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please Enter valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              AppTextFormFeild(
-                labelText: 'phone',
-                controller: phoneTextFeildController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please Enter valid phone';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              AppElevatedButton(
-                label: widget.client == null ? 'Submit' : 'Edit Client',
-                onPressed: () async {
-                  await onSubmit();
-                },
-              )
-            ],
+        child: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Column(
+              children: [
+                AppTextFormFeild(
+                  labelText: 'name',
+                  controller: nameTextFeildController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please Enter valid name';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                AppTextFormFeild(
+                  labelText: 'address',
+                  controller: addressTextFeildController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please Enter valid address';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                AppTextFormFeild(
+                  labelText: 'email',
+                  controller: emailTextFeildController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please Enter valid email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                AppTextFormFeild(
+                  labelText: 'phone',
+                  controller: phoneTextFeildController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please Enter valid phone';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                AppElevatedButton(
+                  label: widget.client == null ? 'Submit' : 'Edit Client',
+                  onPressed: () async {
+                    await onSubmit();
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

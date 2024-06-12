@@ -1,5 +1,5 @@
 class Client {
-  String? id;
+  int? id;
   String? name;
   String? email;
   String? phone;
