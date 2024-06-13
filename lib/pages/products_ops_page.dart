@@ -181,7 +181,7 @@ class _ProductsOpsPageState extends State<ProductsOpsPage> {
       if (formKey.currentState!.validate()) {
         //Add Product logic
         if (widget.product == null) {
-          sqlHelper.db!.insert(
+          var result = await sqlHelper.db!.insert(
               'products',
               conflictAlgorithm: ConflictAlgorithm.replace,
               {
@@ -191,9 +191,9 @@ class _ProductsOpsPageState extends State<ProductsOpsPage> {
                 'stock': double.parse(stockTextFeildController.text),
                 'image': imageTextFeildController.text,
                 'categoryId': selectedCategoryId,
-                'isAvaliable': isAvailable ?? false,
+                'isAvaliable': (isAvailable! ? 1 : 0),
               });
-
+          print(result);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               backgroundColor: Colors.green,
@@ -243,6 +243,7 @@ class _ProductsOpsPageState extends State<ProductsOpsPage> {
           ),
         ),
       );
+      print('==========> Error is $e');
     }
   }
 }

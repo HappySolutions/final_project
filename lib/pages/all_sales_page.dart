@@ -1,6 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:final_project/helpers/sql_helper.dart';
 import 'package:final_project/models/order.dart';
+import 'package:final_project/models/order_item.dart';
 import 'package:final_project/widgets/app_table_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -15,6 +16,7 @@ class AllSalesPage extends StatefulWidget {
 
 class _AllSalesPageState extends State<AllSalesPage> {
   List<Order>? orders;
+  List<OrderItem>? selectedOrderItems;
 
   @override
   void initState() {
@@ -29,8 +31,6 @@ class _AllSalesPageState extends State<AllSalesPage> {
       Select O.*, C.name as clientName, C.phone as clientPhone from orders O
       Inner JOIN clients C
       On O.clientId = C.id
-      
-      
       """);
       if (data.isNotEmpty) {
         orders = [];
@@ -47,9 +47,37 @@ class _AllSalesPageState extends State<AllSalesPage> {
     setState(() {});
   }
 
+  void getOrderProductItem() async {
+    try {
+      var sqlHelper = GetIt.I.get<SqlHelper>();
+      var data = await sqlHelper.db!.rawQuery("""
+      Select OPI.*, O.label as orderLabel, O. as productCount from orderProductItems OPI
+      Inner JOIN orders O
+      On OPI.orderId = O.id
+      """);
+      if (data.isNotEmpty) {
+        selectedOrderItems = [];
+
+        for (var item in data) {
+          selectedOrderItems?.add(OrderItem.fromJson(item));
+        }
+      } else {
+        selectedOrderItems = [];
+      }
+    } catch (e) {
+      print('Error in get selectedOrderItems $e');
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          onShowOrder();
+        },
+      ),
       appBar: AppBar(
         title: const Text('All Sales'),
       ),
@@ -72,8 +100,8 @@ class _AllSalesPageState extends State<AllSalesPage> {
               onDelete: (order) async {
                 await onDeleteOrder(order);
               },
-              onShow: (order) async {
-                await onShowOrder(order);
+              onShow: (order) {
+                onShowOrder();
               },
             ),
           ),
@@ -82,36 +110,47 @@ class _AllSalesPageState extends State<AllSalesPage> {
     );
   }
 
-//TODO update onShowOrder function
-  Future<void> onShowOrder(Order order) async {
+  Future<void> onShowOrder() async {
     showDialog(
         context: context,
         builder: (ctx) {
-          return StatefulBuilder(builder: (context, setStateEx) {
+          return Builder(builder: (context) {
             return Dialog(
-              child: (orders?.isEmpty ?? false)
-                  ? const Center(
-                      child: Text('NO date found'),
-                    )
-                  : Column(
-                      children: [
-                        ListView(
-                          children: [
-                            for (var order in orders!)
-                              ListTile(
-                                subtitle: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text('order product ${order.label}'),
-                                  ],
-                                ),
-                                title: const Text('No name'),
-                                leading: Image.network(''),
-                              ),
-                          ],
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'OrderItems',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
                         ),
-                      ],
-                    ),
+                      ),
+                      for (var orderItem in selectedOrderItems ?? [])
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: ListTile(
+                            title: Text(
+                                '${orderItem.product.name ?? 'No name'}, ${orderItem.productCount}X'),
+                            leading:
+                                Image.network(orderItem.product.image ?? ''),
+                            trailing: Text(
+                                '${orderItem.productCount * orderItem.product.price}'),
+                          ),
+                        ),
+                      const Text(
+                        'Total Price: ',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             );
           });
         });

@@ -241,39 +241,41 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
                 ),
               ),
               Card(
-                  child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    const Text(
-                      'OrderItems',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                      ),
-                    ),
-                    for (var orderItem in selectedOrderItems ?? [])
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: ListTile(
-                          title: Text(
-                              '${orderItem.product.name ?? 'No name'}, ${orderItem.productCount}X'),
-                          leading: Image.network(orderItem.product.image ?? ''),
-                          trailing: Text(
-                              '${orderItem.productCount * orderItem.product.price}'),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'OrderItems',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
                         ),
                       ),
-                    Text(
-                      'Total Price: $calcualteTotalPrice',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
+                      for (var orderItem in selectedOrderItems ?? [])
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: ListTile(
+                            title: Text(
+                                '${orderItem.product.name ?? 'No name'}, ${orderItem.productCount}X'),
+                            leading:
+                                Image.network(orderItem.product.image ?? ''),
+                            trailing: Text(
+                                '${orderItem.productCount * orderItem.product.price}'),
+                          ),
+                        ),
+                      Text(
+                        'Total Price: $calcualteTotalPrice',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                    //TODO add discount text here
-                  ],
+                      //TODO add discount text here
+                    ],
+                  ),
                 ),
-              )),
+              ),
               AppElevatedButton(
                 label: 'Add Order',
                 onPressed: () async {
@@ -292,7 +294,7 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
       if (selectedOrderItems == null ||
           (selectedOrderItems?.isEmpty ?? false)) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             backgroundColor: Colors.red,
             content: Text(
               'You must add order items',
@@ -321,7 +323,7 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
       }
       var result = await batch.commit();
       print('=======> $result');
-
+      print(selectedOrderItems);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.green,
@@ -338,7 +340,7 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
           backgroundColor: Colors.red,
           content: Text(
             '==========> Error is $e',
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
         ),
       );
