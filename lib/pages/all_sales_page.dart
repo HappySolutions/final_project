@@ -2,6 +2,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:final_project/helpers/sql_helper.dart';
 import 'package:final_project/models/order.dart';
 import 'package:final_project/models/order_item.dart';
+import 'package:final_project/pages/view_order_page.dart';
 import 'package:final_project/widgets/app_table_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -51,9 +52,9 @@ class _AllSalesPageState extends State<AllSalesPage> {
     try {
       var sqlHelper = GetIt.I.get<SqlHelper>();
       var data = await sqlHelper.db!.rawQuery("""
-      Select OPI.*, O.label as orderLabel, O. as productCount from orderProductItems OPI
-      Inner JOIN orders O
-      On OPI.orderId = O.id
+      Select OPI.*, P.id as productId, P. as productCount from orderProductItems OPI
+      Inner JOIN products P
+      On P.id = OPI.productId
       """);
       if (data.isNotEmpty) {
         selectedOrderItems = [];
@@ -75,7 +76,8 @@ class _AllSalesPageState extends State<AllSalesPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          onShowOrder();
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ViewOrderPage()));
         },
       ),
       appBar: AppBar(
@@ -101,7 +103,13 @@ class _AllSalesPageState extends State<AllSalesPage> {
                 await onDeleteOrder(order);
               },
               onShow: (order) {
-                onShowOrder();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ViewOrderPage(
+                              order: order,
+                            )));
+                setState(() {});
               },
             ),
           ),

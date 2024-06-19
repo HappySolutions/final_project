@@ -35,7 +35,134 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Container(),
+      drawer: Drawer(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              /// Header of the Drawer
+              Material(
+                color: Theme.of(context).primaryColor,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).padding.top, bottom: 24),
+                    child: const Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 52,
+                          backgroundImage: NetworkImage(
+                              'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHNtaWx5JTIwZmFjZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60'),
+                        ),
+                        SizedBox(
+                          height: 12,
+                        ),
+                        Text(
+                          'Happy',
+                          style: TextStyle(fontSize: 28, color: Colors.white),
+                        ),
+                        Text(
+                          '@happy.com',
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              /// Header Menu items
+              Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.home_outlined),
+                    title: const Text('Home'),
+                    onTap: () {
+                      /// Close Navigation drawer before
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.apps),
+                    title: const Text('Categories'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CategoriesPage2()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.workspaces),
+                    title: const Text('Products'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ProductsPage()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: const Text('Clients'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ClientsPage()),
+                      );
+                    },
+                  ),
+                  const Divider(
+                    color: Colors.black45,
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.shopping_cart),
+                    title: const Text('New Sale'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SaleOpsPage()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.shopping_bag),
+                    title: const Text('All Sales'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AllSalesPage()),
+                      );
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
       appBar: AppBar(),
       body: Column(
         children: [
