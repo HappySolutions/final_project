@@ -102,7 +102,6 @@ class _ClientsPageState extends State<ClientsPage> {
               child: AppTable(
                 minWidth: 800,
                 columns: const [
-                  DataColumn(label: Text('Id')),
                   DataColumn(label: Text('Name')),
                   DataColumn(label: Text('Email')),
                   DataColumn(label: Text('Phone')),
@@ -182,7 +181,6 @@ class ClientsDataSource extends DataTableSource {
   @override
   DataRow? getRow(int index) {
     return DataRow2(cells: [
-      DataCell(Text('${clients?[index].id}')),
       DataCell(Text('${clients?[index].name}')),
       DataCell(Text('${clients?[index].email}')),
       DataCell(Text('${clients?[index].phone}')),

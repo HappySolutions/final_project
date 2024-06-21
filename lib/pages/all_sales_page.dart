@@ -5,7 +5,6 @@ import 'package:final_project/models/order_item.dart';
 import 'package:final_project/pages/view_order_page.dart';
 import 'package:final_project/widgets/app_table_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 
 class AllSalesPage extends StatefulWidget {
@@ -85,34 +84,73 @@ class _AllSalesPageState extends State<AllSalesPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: AppTable(
-            minWidth: 800,
-            columns: const [
-              DataColumn(label: Text('Id')),
-              DataColumn(label: Text('Label')),
-              DataColumn(label: Text('Total Price')),
-              DataColumn(label: Text('Discount')),
-              DataColumn(label: Text('Client Name')),
-              DataColumn(label: Text('Client Phone')),
-              DataColumn(label: Text('Actions')),
-            ],
-            source: OrdersDataSource(
-              orders: orders,
-              onDelete: (order) async {
-                await onDeleteOrder(order);
-              },
-              onShow: (order) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ViewOrderPage(
-                              order: order,
-                            )));
+        child: Column(
+          children: [
+            TextField(
+              onChanged: (text) async {
+                if (text == '') {
+                  getOrders();
+                  return;
+                }
+                var sqlHelper = GetIt.I.get<SqlHelper>();
+                var data = await sqlHelper.db!.rawQuery("""
+                  SELECT * From orders
+                  where name like '%$text%' OR description like '%$text%'
+                  """);
+                if (data.isNotEmpty) {
+                  orders = [];
+                  for (var item in data) {
+                    orders?.add(Order.fromJson(item));
+                  }
+                } else {
+                  orders = [];
+                }
                 setState(() {});
               },
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                border: const OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                ),
+                enabledBorder: const OutlineInputBorder(),
+                errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+                labelText: 'Search',
+              ),
             ),
-          ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: AppTable(
+                minWidth: 800,
+                columns: const [
+                  DataColumn(label: Text('Id')),
+                  DataColumn(label: Text('Label')),
+                  DataColumn(label: Text('Total Price')),
+                  DataColumn(label: Text('Discount')),
+                  DataColumn(label: Text('Client Name')),
+                  DataColumn(label: Text('Client Phone')),
+                  DataColumn(label: Text('Actions')),
+                ],
+                source: OrdersDataSource(
+                  orders: orders,
+                  onDelete: (order) async {
+                    await onDeleteOrder(order);
+                  },
+                  onShow: (order) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ViewOrderPage(
+                                  order: order,
+                                )));
+                    setState(() {});
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
