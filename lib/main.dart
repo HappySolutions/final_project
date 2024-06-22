@@ -2,7 +2,6 @@ import 'package:final_project/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'helpers/sql_helper.dart';
-import 'pages/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

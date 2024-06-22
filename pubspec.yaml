@@ -25,3 +25,4 @@ flutter:
   uses-material-design: true
   assets:
       - assets/lottie/cart.json
+      - assets/lottie/shop.json

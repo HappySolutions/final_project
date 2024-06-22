@@ -13,7 +13,7 @@ class SplashScreen extends StatelessWidget {
         children: [
           Expanded(
             child: Center(
-              child: LottieBuilder.asset('assets/lottie/shop.json'),
+              child: LottieBuilder.asset('assets/lottie/cart.json'),
             ),
           ),
           const Text(

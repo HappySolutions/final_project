@@ -15,6 +15,9 @@ class ProductsPage extends StatefulWidget {
 
 class _ProductsPageState extends State<ProductsPage> {
   List<PosProduct>? products;
+  int? sortColumnIndex;
+  bool isAscending = true;
+  bool isSorted = true;
 
   @override
   void initState() {
@@ -111,17 +114,66 @@ class _ProductsPageState extends State<ProductsPage> {
               Expanded(
                 child: AppTable(
                   minWidth: 1100,
-                  columns: const [
-                    DataColumn(label: Text('Id')),
-                    DataColumn(label: Text('Name')),
-                    DataColumn(label: Text('Description')),
-                    DataColumn(label: Text('Price')),
-                    DataColumn(label: Text('Stock')),
-                    DataColumn(label: Text('isAvailable')),
-                    DataColumn(label: Text('Image')),
-                    DataColumn(label: Text('Cat Name')),
-                    DataColumn(label: Text('Cat Description')),
-                    DataColumn(label: Text('Actions')),
+                  sortArrowBuilder: (bool ascending, bool sorted) {
+                    ascending = isAscending;
+                    sorted = isSorted;
+                    if (ascending) {
+                      return const Icon(Icons.arrow_upward,
+                          color: Colors.white);
+                    } else {
+                      return const Icon(Icons.arrow_downward,
+                          color: Colors.white);
+                    }
+                  },
+                  sortAscending: isAscending,
+                  sortColumnIndex: sortColumnIndex,
+                  columns: [
+                    const DataColumn(label: Text('Id')),
+                    DataColumn(
+                      label: const Text('Name'),
+                      onSort: (columnIndex, ascending) {
+                        ascending = isAscending;
+                        if (!ascending) {
+                          products!.sort((a, b) => a.name!.compareTo(b.name!));
+                          isSorted = true;
+                          isAscending = true;
+                        } else {
+                          products!.sort((b, a) => a.name!.compareTo(b.name!));
+                          isSorted = false;
+                          isAscending = false;
+                        }
+                        setState(
+                          () {},
+                        );
+                      },
+                    ),
+                    const DataColumn(label: Text('Description')),
+                    DataColumn(
+                      label: const Text('Price'),
+                      onSort: (columnIndex, ascending) {
+                        ascending = isAscending;
+                        if (!ascending) {
+                          products!
+                              .sort((a, b) => a.price!.compareTo(b.price!));
+                          isSorted = true;
+                          isAscending = true;
+                        } else {
+                          products!
+                              .sort((b, a) => a.price!.compareTo(b.price!));
+                          isSorted = false;
+                          isAscending = false;
+                        }
+                        setState(
+                          () {},
+                        );
+                      },
+                    ),
+                    const DataColumn(label: Text('Stock')),
+                    const DataColumn(label: Text('isAvailable')),
+                    const DataColumn(label: Text('Image')),
+                    const DataColumn(label: Text('Cat Name')),
+                    const DataColumn(label: Text('Cat Description')),
+                    const DataColumn(label: Text('Actions')),
                   ],
                   source: ProductsDataSource(
                     products: products,
@@ -144,6 +196,38 @@ class _ProductsPageState extends State<ProductsPage> {
             ],
           ),
         ));
+  }
+
+  void sortAscending() {
+    for (var i = products!.length; i < 0; i--) {
+      if (i + 1 == products!.length) break;
+      if (products![i].price! < products![(i + 1)].price!) {
+        continue;
+      } else {
+        var temp = products![i];
+        products![i] = products![(i + 1)];
+        products![(i + 1)] = temp;
+        sortAscending();
+      }
+    }
+    isSorted = true;
+    isAscending = true;
+  }
+
+  void sortDescending() {
+    for (var i = products!.length; i < 0; i--) {
+      if (i + 1 == products!.length) break;
+      if (products![i].price! > products![(i + 1)].price!) {
+        continue;
+      } else {
+        var temp = products![i];
+        products![i] = products![(i + 1)];
+        products![(i + 1)] = temp;
+        sortDescending();
+      }
+    }
+    isSorted = false;
+    isAscending = false;
   }
 
   Future<void> onDeleteProduct(PosProduct product) async {

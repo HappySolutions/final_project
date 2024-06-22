@@ -73,217 +73,219 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Label: $orderLabel',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      ClientsDropDown(
-                        selectedValue: selectedClientId,
-                        onChanged: (value) {
-                          selectedClientId = value;
-                          setState(() {});
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      Row(children: [
-                        IconButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (ctx) {
-                                  return StatefulBuilder(
-                                      builder: (context, setStateEx) {
-                                    return Dialog(
-                                      child: (products?.isEmpty ?? false)
-                                          ? const Center(
-                                              child: Text('NO date found'),
-                                            )
-                                          : Column(
-                                              children: [
-                                                Expanded(
-                                                  child: ListView(
-                                                    children: [
-                                                      for (var product
-                                                          in products!)
-                                                        ListTile(
-                                                          subtitle: getOrderItem(
-                                                                      product
-                                                                          .id!) !=
-                                                                  null
-                                                              ? Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    IconButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        if (getOrderItem(product.id!)!.productCount ==
-                                                                            0)
-                                                                          return;
-                                                                        getOrderItem(product.id!)
-                                                                            ?.productCount = getOrderItem(product.id!)!
-                                                                                .productCount! -
-                                                                            1;
-                                                                        setStateEx(
-                                                                            () {});
-                                                                      },
-                                                                      icon: const Icon(
-                                                                          Icons
-                                                                              .remove),
-                                                                    ),
-                                                                    Text(
-                                                                        '${getOrderItem(product.id!)?.productCount}'),
-                                                                    IconButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        if (getOrderItem(product.id!)!.productCount ==
-                                                                            getOrderItem(product.id!)!.product!.stock)
-                                                                          return;
-                                                                        getOrderItem(product.id!)
-                                                                            ?.productCount = getOrderItem(product.id!)!
-                                                                                .productCount! +
-                                                                            1;
-                                                                        setStateEx(
-                                                                            () {});
-                                                                      },
-                                                                      icon: const Icon(
-                                                                          Icons
-                                                                              .add),
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              : const SizedBox(),
-                                                          title: Text(
-                                                              product.name ??
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Card(
+                    color: Colors.white70,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Label: $orderLabel',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          ClientsDropDown(
+                            selectedValue: selectedClientId,
+                            onChanged: (value) {
+                              selectedClientId = value;
+                              setState(() {});
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          Row(children: [
+                            IconButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (ctx) {
+                                      return StatefulBuilder(
+                                          builder: (context, setStateEx) {
+                                        return Dialog(
+                                          child: (products?.isEmpty ?? false)
+                                              ? const Center(
+                                                  child: Text('NO date found'),
+                                                )
+                                              : Column(
+                                                  children: [
+                                                    Expanded(
+                                                      child: ListView(
+                                                        children: [
+                                                          for (var product
+                                                              in products!)
+                                                            ListTile(
+                                                              subtitle: getOrderItem(
+                                                                          product
+                                                                              .id!) !=
+                                                                      null
+                                                                  ? Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        IconButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            if (getOrderItem(product.id!)!.productCount ==
+                                                                                0)
+                                                                              return;
+                                                                            getOrderItem(product.id!)?.productCount =
+                                                                                getOrderItem(product.id!)!.productCount! - 1;
+                                                                            setStateEx(() {});
+                                                                          },
+                                                                          icon:
+                                                                              const Icon(Icons.remove),
+                                                                        ),
+                                                                        Text(
+                                                                            '${getOrderItem(product.id!)?.productCount}'),
+                                                                        IconButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            if (getOrderItem(product.id!)!.productCount ==
+                                                                                getOrderItem(product.id!)!.product!.stock)
+                                                                              return;
+                                                                            getOrderItem(product.id!)?.productCount =
+                                                                                getOrderItem(product.id!)!.productCount! + 1;
+                                                                            setStateEx(() {});
+                                                                          },
+                                                                          icon:
+                                                                              const Icon(Icons.add),
+                                                                        ),
+                                                                      ],
+                                                                    )
+                                                                  : const SizedBox(),
+                                                              title: Text(product
+                                                                      .name ??
                                                                   'No name'),
-                                                          leading: Image
-                                                              .network(product
-                                                                      .image ??
-                                                                  ''),
-                                                          trailing: IconButton(
-                                                            onPressed: () {
-                                                              if (getOrderItem(
-                                                                      product
-                                                                          .id!) !=
-                                                                  null) {
-                                                                onDeletOrderItem(
-                                                                    product
-                                                                        .id!);
-                                                              } else {
-                                                                onAddOrderItem(
-                                                                    product);
-                                                              }
-                                                              setStateEx(() {});
-                                                            },
-                                                            icon: getOrderItem(
+                                                              leading: Image
+                                                                  .network(product
+                                                                          .image ??
+                                                                      ''),
+                                                              trailing:
+                                                                  IconButton(
+                                                                onPressed: () {
+                                                                  if (getOrderItem(
+                                                                          product
+                                                                              .id!) !=
+                                                                      null) {
+                                                                    onDeletOrderItem(
                                                                         product
+                                                                            .id!);
+                                                                  } else {
+                                                                    onAddOrderItem(
+                                                                        product);
+                                                                  }
+                                                                  setStateEx(
+                                                                      () {});
+                                                                },
+                                                                icon: getOrderItem(product
                                                                             .id!) ==
-                                                                    null
-                                                                ? const Icon(
-                                                                    Icons.add)
-                                                                : const Icon(
-                                                                    Icons
-                                                                        .delete),
-                                                          ),
-                                                        ),
-                                                    ],
-                                                  ),
+                                                                        null
+                                                                    ? const Icon(
+                                                                        Icons
+                                                                            .add)
+                                                                    : const Icon(
+                                                                        Icons
+                                                                            .delete),
+                                                              ),
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: AppElevatedButton(
+                                                        label: 'Back',
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: AppElevatedButton(
-                                                    label: 'Back',
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                    );
-                                  });
-                                });
-                            setState(() {});
-                          },
-                          icon: const Icon(
-                            Icons.add,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const Text(
-                          'Add Products',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ]),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
-                ),
-              ),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      const Text(
-                        'OrderItems',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
+                                        );
+                                      });
+                                    });
+                                setState(() {});
+                              },
+                              icon: const Icon(
+                                Icons.add,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const Text(
+                              'Add Products',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ]),
+                          const SizedBox(height: 10),
+                        ],
                       ),
-                      for (var orderItem in selectedOrderItems ?? [])
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: ListTile(
-                            title: Text(
-                                '${orderItem.product.name ?? 'No name'}, ${orderItem.productCount}X'),
-                            leading:
-                                Image.network(orderItem.product.image ?? ''),
-                            trailing: Text(
-                                '${orderItem.productCount * orderItem.product.price}'),
-                          ),
-                        ),
-                      Text(
-                        'Total Price: $calcualteTotalPrice',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
-                      ),
-                      //TODO add discount text here
-                    ],
+                    ),
                   ),
-                ),
+                  Card(
+                    color: Colors.white70,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          const Text(
+                            'OrderItems',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
+                          ),
+                          for (var orderItem in selectedOrderItems ?? [])
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: ListTile(
+                                title: Text(
+                                    '${orderItem.product.name ?? 'No name'}, ${orderItem.productCount}X'),
+                                leading: Image.network(
+                                    orderItem.product.image ?? ''),
+                                trailing: Text(
+                                    '${orderItem.productCount * orderItem.product.price}'),
+                              ),
+                            ),
+                          Text(
+                            'Total Price: $calcualteTotalPrice',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
+                          ),
+                          //TODO add discount text here
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              AppElevatedButton(
-                label: 'Add Order',
-                onPressed: () async {
-                  await onSetOrder();
-                },
-              )
-            ],
-          ),
+            ),
+            AppElevatedButton(
+              label: 'Add Order',
+              onPressed: () async {
+                await onSetOrder();
+              },
+            )
+          ],
         ),
       ),
     );

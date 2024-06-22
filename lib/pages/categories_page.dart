@@ -17,6 +17,9 @@ class CategoriesPage2 extends StatefulWidget {
 
 class _CategoriesPage2State extends State<CategoriesPage2> {
   List<PosCategory>? categories;
+  int? sortColumnIndex;
+  bool isAscending = true;
+  bool isSorted = true;
 
   @override
   void initState() {
@@ -44,6 +47,7 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
 
   @override
   Widget build(BuildContext context) {
+    var _chosenSubCounty;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categories'),
@@ -104,11 +108,41 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
             const SizedBox(height: 20),
             Expanded(
               child: AppTable(
-                columns: const [
-                  DataColumn(label: Text('Id')),
-                  DataColumn(label: Text('Name')),
-                  DataColumn(label: Text('Description')),
-                  DataColumn(label: Text('Actions')),
+                sortArrowBuilder: (bool ascending, bool sorted) {
+                  ascending = isAscending;
+                  if (ascending) {
+                    return const Icon(Icons.arrow_downward,
+                        color: Colors.white);
+                  } else {
+                    return const Icon(Icons.arrow_upward, color: Colors.white);
+                  }
+                },
+                sortAscending: isAscending,
+                sortColumnIndex: sortColumnIndex,
+                columns: [
+                  DataColumn(
+                    label: const Text('Id'),
+                    onSort: (columnIndex, ascending) {
+                      ascending = isAscending;
+                      setState(() {});
+                      if (!ascending) {
+                        categories!.sort((a, b) => a.id!.compareTo(b.id!));
+                        isSorted = true;
+                        isAscending = true;
+                        // sortAscending();
+                      } else {
+                        categories!.sort((b, a) => a.id!.compareTo(b.id!));
+                        isSorted = false;
+                        isAscending = false;
+                        // sortDescending();
+                      }
+                    },
+                  ),
+                  const DataColumn(
+                    label: Text('Name'),
+                  ),
+                  const DataColumn(label: Text('Description')),
+                  const DataColumn(label: Text('Actions')),
                 ],
                 source: CategoriesDataSource(
                   categories: categories,
@@ -132,6 +166,39 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
         ),
       ),
     );
+  }
+
+  void sortAscending() {
+    for (var i = 0; i < categories!.length; i++) {
+      if (i + 1 == categories!.length) break;
+      if (categories![i].id! < categories![(i + 1)].id!) {
+        continue;
+      } else {
+        var temp = categories![i];
+        categories![i] = categories![(i + 1)];
+        categories![(i + 1)] = temp;
+        sortAscending();
+      }
+    }
+    isSorted = true;
+    isAscending = true;
+  }
+
+  void sortDescending() {
+    for (var i = categories!.length; i < 0; i--) {
+      if (i + 1 == categories!.length) break;
+      if (categories![i].id! > categories![(i + 1)].id!) {
+        continue;
+      } else {
+        var temp = categories![i];
+        categories![i] = categories![(i + 1)];
+        categories![(i + 1)] = temp;
+
+        sortDescending();
+      }
+    }
+    isSorted = false;
+    isAscending = false;
   }
 
   Future<void> onDeleteCategory(PosCategory category) async {
@@ -179,10 +246,11 @@ class CategoriesDataSource extends DataTableSource {
   List<PosCategory>? categories;
   void Function(PosCategory)? onUpdate;
   void Function(PosCategory)? onDelete;
-  CategoriesDataSource(
-      {required this.categories,
-      required this.onUpdate,
-      required this.onDelete});
+  CategoriesDataSource({
+    required this.categories,
+    required this.onUpdate,
+    required this.onDelete,
+  });
   @override
   DataRow? getRow(int index) {
     return DataRow2(cells: [
