@@ -19,13 +19,9 @@ class ClientsPage extends StatefulWidget {
 
 class _ClientsPageState extends State<ClientsPage> {
   List<Client>? clients;
-  Random random = Random();
-  int rndImgNum = 1;
 
   @override
   void initState() {
-    rndImgNum = random.nextInt(40);
-
     getClients();
     super.initState();
   }
@@ -163,16 +159,22 @@ class _ClientsPageState extends State<ClientsPage> {
                     child: Card(
                       color: Colors.white60,
                       child: ListTile(
-                        title: Text('${clients?[index].name}'),
+                        title: Text(
+                          '${clients?[index].name}',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('${clients?[index].email}'),
                             Text('${clients?[index].address}'),
-                            Text('${clients?[index].phone}'),
+                            Text(
+                              '${clients?[index].phone}',
+                              style: TextStyle(fontSize: 12),
+                            ),
                           ],
                         ),
-                        leading: const CircleAvatar(
+                        trailing: const CircleAvatar(
                           radius: 50,
                           backgroundImage: NetworkImage(
                               'https://avatar.iran.liara.run/public'),
