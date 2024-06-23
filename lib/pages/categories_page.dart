@@ -47,7 +47,6 @@ class _CategoriesPage2State extends State<CategoriesPage2> {
 
   @override
   Widget build(BuildContext context) {
-    var _chosenSubCounty;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categories'),

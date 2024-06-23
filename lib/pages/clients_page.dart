@@ -1,9 +1,13 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'dart:math';
+
 import 'package:data_table_2/data_table_2.dart';
 import 'package:final_project/helpers/sql_helper.dart';
 import 'package:final_project/models/client.dart';
 import 'package:final_project/pages/clients_ops_page.dart';
-import 'package:final_project/widgets/app_table_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get_it/get_it.dart';
 
 class ClientsPage extends StatefulWidget {
@@ -15,9 +19,13 @@ class ClientsPage extends StatefulWidget {
 
 class _ClientsPageState extends State<ClientsPage> {
   List<Client>? clients;
+  Random random = Random();
+  int rndImgNum = 1;
 
   @override
   void initState() {
+    rndImgNum = random.nextInt(40);
+
     getClients();
     super.initState();
   }
@@ -99,31 +107,106 @@ class _ClientsPageState extends State<ClientsPage> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: AppTable(
-                minWidth: 800,
-                columns: const [
-                  DataColumn(label: Text('Name')),
-                  DataColumn(label: Text('Email')),
-                  DataColumn(label: Text('Phone')),
-                  DataColumn(label: Text('Address')),
-                  DataColumn(label: Text('Actions')),
-                ],
-                source: ClientsDataSource(
-                  clients: clients,
-                  onUpdate: (client) async {
-                    var result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => ClientsOpsPage(client: client)));
-                    if (result ?? false) {
-                      getClients();
-                    }
-                  },
-                  onDelete: (client) async {
-                    await onDeleteCategory(client);
-                  },
-                ),
+              child: ListView.builder(
+                itemCount: clients?.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Slidable(
+                    startActionPane: ActionPane(
+                        motion: const ScrollMotion(),
+                        extentRatio: 0.25,
+                        children: [
+                          Expanded(
+                            child: Card(
+                              color: Colors.white60,
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: InkWell(
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: Colors.deepPurple,
+                                        size: 20,
+                                      ),
+                                      onTap: () async {
+                                        await onUpdateClient(clients![index]);
+                                      },
+                                    ),
+                                  ),
+                                  Divider(
+                                    height: 1,
+                                    color: Colors.deepPurple,
+                                  ),
+                                  Expanded(
+                                    child: InkWell(
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                        size: 20,
+                                      ),
+                                      onTap: () async {
+                                        await onDeleteClient(clients![index]);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ]),
+                    child: Card(
+                      color: Colors.white60,
+                      child: ListTile(
+                        title: Text('${clients?[index].name}'),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('${clients?[index].email}'),
+                            Text('${clients?[index].address}'),
+                            Text('${clients?[index].phone}'),
+                          ],
+                        ),
+                        leading: const CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(
+                              'https://avatar.iran.liara.run/public'),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
+              // AppTable(
+              //   minWidth: 800,
+              //   columns: const [
+              //     DataColumn(label: Text('Name')),
+              //     DataColumn(label: Text('Email')),
+              //     DataColumn(label: Text('Phone')),
+              //     DataColumn(label: Text('Address')),
+              //     DataColumn(label: Text('Actions')),
+              //   ],
+              //   source: ClientsDataSource(
+              //     clients: clients,
+              //     onUpdate: (client) async {
+              //       var result = await Navigator.push(
+              //           context,
+              //           MaterialPageRoute(
+              //               builder: (ctx) => ClientsOpsPage(client: client)));
+              //       if (result ?? false) {
+              //         getClients();
+              //       }
+              //     },
+              //     onDelete: (client) async {
+              //       await onDeleteCategory(client);
+              //     },
+              //   ),
+              // ),
             ),
           ],
         ),
@@ -131,7 +214,7 @@ class _ClientsPageState extends State<ClientsPage> {
     );
   }
 
-  Future<void> onDeleteCategory(Client client) async {
+  Future<void> onDeleteClient(Client client) async {
     try {
       var dialogResult = await showDialog(
           context: context,
@@ -168,6 +251,14 @@ class _ClientsPageState extends State<ClientsPage> {
         backgroundColor: Colors.red,
       ));
       print('===============> Error is $e');
+    }
+  }
+
+  Future<void> onUpdateClient(Client client) async {
+    var result = await Navigator.push(context,
+        MaterialPageRoute(builder: (ctx) => ClientsOpsPage(client: client)));
+    if (result ?? false) {
+      getClients();
     }
   }
 }

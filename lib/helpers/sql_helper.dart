@@ -66,6 +66,12 @@ class SqlHelper {
       foreign key (productId) REFERENCES products(id)
       ON DELETE RESTRICT
       )""");
+      batch.execute("""
+      Create table If not exists exchangeRate(
+      id integer primary key,
+      usd double,
+      egp double
+      )""");
 
       var result = await batch.commit();
 

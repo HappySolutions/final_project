@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:final_project/models/order.dart';
+import 'package:final_project/models/rate.dart';
 import 'package:final_project/pages/all_sales_page.dart';
 import 'package:final_project/pages/categories_page.dart';
 import 'package:final_project/pages/clients_page.dart';
@@ -20,21 +24,73 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool result = false;
   bool showLoading = true;
+  Random random = Random();
+  late int rndIndex;
+  List<Rate>? rates;
+  List<Order>? orders;
+  double todaySale = 0.0;
+
   @override
   void initState() {
     init();
+    rndIndex = random.nextInt(2);
     super.initState();
   }
 
   void init() async {
     result = await GetIt.I.get<SqlHelper>().createTables();
     showLoading = false;
+    getExchangeRate();
+    getTodaysSale();
+
+    setState(() {});
+  }
+
+  void getExchangeRate() async {
+    try {
+      var sqlHelper = GetIt.I.get<SqlHelper>();
+      var data = await sqlHelper.db!.query('exchangeRate');
+      rates = [];
+      if (data.isNotEmpty) {
+        for (var item in data) {
+          rates?.add(Rate.fromJson(item));
+        }
+      } else {
+        rates = [];
+      }
+    } catch (e) {
+      print('Error in get Rates $e');
+    }
+    setState(() {});
+  }
+
+  void getTodaysSale() async {
+    try {
+      var sqlHelper = GetIt.I.get<SqlHelper>();
+      var data = await sqlHelper.db!.query('orders');
+
+      if (data.isNotEmpty) {
+        orders = [];
+
+        for (var item in data) {
+          orders?.add(Order.fromJson(item));
+        }
+        todaySale =
+            orders!.map((item) => item.totalPrice!).reduce((x, y) => x + y);
+        print(todaySale);
+      } else {
+        orders = [];
+      }
+    } catch (e) {
+      print('Error in get Orders $e');
+    }
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // floatingActionButton: FloatingActionButton(onPressed: onSubmit),
       drawer: Drawer(
         backgroundColor: Colors.white,
         child: SingleChildScrollView(
@@ -210,8 +266,9 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(
                             height: 20,
                           ),
-                          const HeaderItem('Exchange Rate', '1USD = 50 Egp'),
-                          const HeaderItem('Today\'s Sales', '1100 Egp'),
+                          HeaderItem('Exchange Rate',
+                              '1USD = ${rates?[rndIndex].egp ?? 0} Egp'),
+                          HeaderItem('Today\'s Sales', '$todaySale Egp'),
                         ],
                       ),
                     ),
@@ -290,4 +347,39 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+/*
+  Future<void> onSubmit() async {
+    try {
+      var sqlHelper = GetIt.I.get<SqlHelper>();
+      sqlHelper.db!.insert(
+          'exchangeRate',
+          conflictAlgorithm: ConflictAlgorithm.replace,
+          {
+            'usd': 1,
+            'egp': 100,
+          });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.green,
+          content: Text(
+            'Category Added Successfully',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+            '==========> Error is $e',
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+    }
+  }
+
+*/
 }

@@ -1,8 +1,10 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:final_project/helpers/sql_helper.dart';
+import 'package:final_project/models/pos_category.dart';
 import 'package:final_project/models/pos_product.dart';
 import 'package:final_project/pages/products_ops_page.dart';
 import 'package:final_project/widgets/app_table_widget.dart';
+import 'package:final_project/widgets/categories_drop_down_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -15,13 +17,18 @@ class ProductsPage extends StatefulWidget {
 
 class _ProductsPageState extends State<ProductsPage> {
   List<PosProduct>? products;
+  List<PosCategory>? categories;
+
   int? sortColumnIndex;
   bool isAscending = true;
   bool isSorted = true;
+  String? _chosenCategory;
 
   @override
   void initState() {
     getProducts();
+    getCategories();
+
     super.initState();
   }
 
@@ -46,6 +53,24 @@ class _ProductsPageState extends State<ProductsPage> {
       }
     } catch (e) {
       print('Error in get Products $e');
+    }
+    setState(() {});
+  }
+
+  void getCategories() async {
+    try {
+      var sqlHelper = GetIt.I.get<SqlHelper>();
+      var data = await sqlHelper.db!.query('categories');
+      categories = [];
+      if (data.isNotEmpty) {
+        for (var item in data) {
+          categories?.add(PosCategory.fromJson(item));
+        }
+      } else {
+        categories = [];
+      }
+    } catch (e) {
+      print('Error in get Categories $e');
     }
     setState(() {});
   }
@@ -110,6 +135,65 @@ class _ProductsPageState extends State<ProductsPage> {
                   labelText: 'Search',
                 ),
               ),
+              const SizedBox(
+                height: 20,
+              ),
+/////////////////////////////////////
+              categories == null
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : (categories?.isEmpty ?? false)
+                      ? const Center(
+                          child: Text('No Categories Found'),
+                        )
+                      : Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.black,
+                                  ),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 5,
+                                    ),
+                                    child: DropdownButton(
+                                      value: _chosenCategory,
+                                      isExpanded: true,
+                                      underline: const SizedBox(),
+                                      hint: const Text('Select Category'),
+                                      items: [
+                                        for (var category in categories!)
+                                          DropdownMenuItem<String>(
+                                            value: category.name,
+                                            child: Text(
+                                                category.name ?? 'No Name'),
+                                          ),
+                                      ],
+                                      onChanged: (value) {
+                                        _chosenCategory = value;
+                                        products = products!
+                                            .where((element) => element
+                                                .categoryName!
+                                                .contains(_chosenCategory!))
+                                            .toList();
+                                        if (products!.isEmpty) {
+                                          getProducts();
+                                          return;
+                                        }
+                                        setState(() {});
+                                      },
+                                    )),
+                              ),
+                            ),
+                          ],
+                        ),
+///////////////////////////////
               const SizedBox(height: 20),
               Expanded(
                 child: AppTable(
