@@ -27,3 +27,4 @@ flutter:
   assets:
       - assets/lottie/cart.json
       - assets/lottie/shop.json
+      - assets/lottie/cartpic.png
