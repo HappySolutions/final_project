@@ -21,6 +21,7 @@ class _AllSalesPageState extends State<AllSalesPage> {
   @override
   void initState() {
     getOrders();
+    // getOrderProductItem();
     super.initState();
   }
 
@@ -47,17 +48,15 @@ class _AllSalesPageState extends State<AllSalesPage> {
     setState(() {});
   }
 
-  void getOrderProductItem() async {
+  void getOrderProductItem(int orderId) async {
     try {
       var sqlHelper = GetIt.I.get<SqlHelper>();
-      var data = await sqlHelper.db!.rawQuery("""
-      Select OPI.*, P.id as productId, P. as productCount from orderProductItems OPI
-      Inner JOIN products P
-      On P.id = OPI.productId
-      """);
+      var data = await sqlHelper.db!.rawQuery(
+          'SELECT * FROM orderProductItems WHERE orderId=?', [orderId]);
       if (data.isNotEmpty) {
         selectedOrderItems = [];
-
+        var testList = data.toList();
+        print(testList);
         for (var item in data) {
           selectedOrderItems?.add(OrderItem.fromJson(item));
         }
@@ -73,12 +72,6 @@ class _AllSalesPageState extends State<AllSalesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ViewOrderPage()));
-        },
-      ),
       appBar: AppBar(
         title: const Text('All Sales'),
       ),
@@ -123,12 +116,12 @@ class _AllSalesPageState extends State<AllSalesPage> {
             const SizedBox(height: 20),
             Expanded(
               child: AppTable(
-                minWidth: 800,
+                minWidth: 1000,
                 columns: const [
-                  DataColumn(label: Text('Id')),
                   DataColumn(label: Text('Label')),
                   DataColumn(label: Text('Total Price')),
                   DataColumn(label: Text('Discount')),
+                  DataColumn(label: Text('Total Price after Discount')),
                   DataColumn(label: Text('Client Name')),
                   DataColumn(label: Text('Client Phone')),
                   DataColumn(label: Text('Actions')),
@@ -139,12 +132,13 @@ class _AllSalesPageState extends State<AllSalesPage> {
                     await onDeleteOrder(order);
                   },
                   onShow: (order) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ViewOrderPage(
-                                  order: order,
-                                )));
+                    getOrderProductItem(order.id!);
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => ViewOrderPage(
+                    //               order: order,
+                    //             )));
                     setState(() {});
                   },
                 ),
@@ -253,10 +247,11 @@ class OrdersDataSource extends DataTableSource {
   @override
   DataRow? getRow(int index) {
     return DataRow2(cells: [
-      DataCell(Text('${orders?[index].id}')),
       DataCell(Text('${orders?[index].label}')),
       DataCell(Text('${orders?[index].totalPrice}')),
       DataCell(Text('${orders?[index].discount}')),
+      DataCell(
+          Text('${(orders![index].totalPrice!) - (orders![index].discount!)}')),
       DataCell(Text('${orders?[index].clientName}')),
       DataCell(Text('${orders?[index].clientPhone}')),
       DataCell(Row(
@@ -267,14 +262,18 @@ class OrdersDataSource extends DataTableSource {
               Icons.visibility,
               color: Colors.green,
             ),
-            onPressed: () {},
+            onPressed: () {
+              onShow!(orders![index]);
+            },
           ),
           IconButton(
             icon: const Icon(
               Icons.delete,
               color: Colors.red,
             ),
-            onPressed: () {},
+            onPressed: () {
+              onDelete!(orders![index]);
+            },
           ),
         ],
       )),

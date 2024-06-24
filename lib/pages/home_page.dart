@@ -10,6 +10,7 @@ import 'package:final_project/pages/products_page.dart';
 import 'package:final_project/widgets/header_item.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../helpers/sql_helper.dart';
 import '../widgets/grid_view_widget.dart';
@@ -90,7 +91,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(onPressed: onSubmit),
+      floatingActionButton: FloatingActionButton(onPressed: onSubmit),
       drawer: Drawer(
         backgroundColor: Colors.white,
         child: SingleChildScrollView(
@@ -266,8 +267,8 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(
                             height: 20,
                           ),
-                          HeaderItem('Exchange Rate',
-                              '1USD = ${rates?[rndIndex].egp ?? 0} Egp'),
+                          HeaderItem('Exchange Rate', '1USD =  Egp'),
+                          //${rates?[rndIndex].egp ?? 0}
                           HeaderItem('Today\'s Sales', '$todaySale Egp'),
                         ],
                       ),
@@ -347,7 +348,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-/*
+
   Future<void> onSubmit() async {
     try {
       var sqlHelper = GetIt.I.get<SqlHelper>();
@@ -356,7 +357,7 @@ class _HomePageState extends State<HomePage> {
           conflictAlgorithm: ConflictAlgorithm.replace,
           {
             'usd': 1,
-            'egp': 100,
+            'egp': 30,
           });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -380,6 +381,4 @@ class _HomePageState extends State<HomePage> {
       );
     }
   }
-
-*/
 }

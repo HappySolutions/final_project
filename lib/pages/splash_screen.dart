@@ -3,9 +3,14 @@ import 'package:final_project/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return AnimatedSplashScreen(
@@ -13,7 +18,7 @@ class SplashScreen extends StatelessWidget {
         children: [
           Expanded(
             child: Center(
-              child: LottieBuilder.asset('assets/lottie/cart.json'),
+              child: LottieBuilder.asset('assets/lottie/shop.json'),
             ),
           ),
           const Text(
