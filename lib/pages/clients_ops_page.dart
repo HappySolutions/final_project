@@ -3,6 +3,7 @@ import 'package:final_project/models/client.dart';
 import 'package:final_project/widgets/app_eleveted_button.dart';
 import 'package:final_project/widgets/app_text_form_feild.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -77,6 +78,7 @@ class _ClientsOpsPageState extends State<ClientsOpsPage> {
                 ),
                 AppTextFormFeild(
                   labelText: 'email',
+                  keyboardType: TextInputType.emailAddress,
                   controller: emailTextFeildController,
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -90,6 +92,10 @@ class _ClientsOpsPageState extends State<ClientsOpsPage> {
                 ),
                 AppTextFormFeild(
                   labelText: 'phone',
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                   controller: phoneTextFeildController,
                   validator: (value) {
                     if (value!.isEmpty) {

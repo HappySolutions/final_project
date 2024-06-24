@@ -116,6 +116,7 @@ class _BottomPart extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 40.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // const Text(
             //   'Find The Best Goods for You',

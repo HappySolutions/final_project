@@ -138,7 +138,6 @@ class _ProductsPageState extends State<ProductsPage> {
               const SizedBox(
                 height: 20,
               ),
-/////////////////////////////////////
               categories == null
                   ? const Center(
                       child: CircularProgressIndicator(),
@@ -193,7 +192,6 @@ class _ProductsPageState extends State<ProductsPage> {
                             ),
                           ],
                         ),
-///////////////////////////////
               const SizedBox(height: 20),
               Expanded(
                 child: AppTable(

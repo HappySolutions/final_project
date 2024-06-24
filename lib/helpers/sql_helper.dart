@@ -100,6 +100,8 @@ class SqlHelper {
             print('=================== Db Created');
           },
         );
+        String path = await getDatabasesPath();
+        print('>>>>>>>>>>>>>>>>>>>>> $path');
       }
     } catch (e) {
       print('error in create db : $e');

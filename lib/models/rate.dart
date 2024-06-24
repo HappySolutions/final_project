@@ -3,7 +3,7 @@ class Rate {
   double? usd;
   double? egp;
 
-  Rate();
+  Rate({required double usd, required double egp});
 
   Rate.fromJson(Map<String, dynamic> json) {
     id = json['id'];

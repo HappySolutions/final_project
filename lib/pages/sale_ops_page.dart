@@ -221,88 +221,111 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
                   ? const Center(
                       child: Text('NO date found'),
                     )
-                  : Column(
-                      children: [
-                        Expanded(
-                          child: ListView(
-                            children: [
-                              for (var product in products!)
-                                ListTile(
-                                  subtitle: getOrderItem(product.id!) != null
-                                      ? Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            IconButton(
-                                              onPressed: () {
-                                                if (getOrderItem(product.id!)!
-                                                        .productCount ==
-                                                    0) {
-                                                  return;
-                                                }
-                                                getOrderItem(product.id!)
-                                                        ?.productCount =
-                                                    getOrderItem(product.id!)!
-                                                            .productCount! -
-                                                        1;
-                                                setStateEx(() {});
-                                                setState((){});
-                                              },
-                                              icon: const Icon(Icons.remove),
-                                            ),
-                                            Text(
-                                                '${getOrderItem(product.id!)?.productCount}'),
-                                            IconButton(
-                                              onPressed: () {
-                                                if (getOrderItem(product.id!)!
-                                                        .productCount ==
-                                                    getOrderItem(product.id!)!
-                                                        .product!
-                                                        .stock) {
-                                                  return;
-                                                }
-                                                getOrderItem(product.id!)
-                                                        ?.productCount =
-                                                    getOrderItem(product.id!)!
-                                                            .productCount! +
-                                                        1;
-                                                setStateEx(() {});
-                                                setState((){});
-                                              },
-                                              icon: const Icon(Icons.add),
-                                            ),
-                                          ],
-                                        )
-                                      : const SizedBox(),
-                                  title: Text(product.name ?? 'No name'),
-                                  leading: Image.network(product.image ?? ''),
-                                  trailing: IconButton(
-                                    onPressed: () {
-                                      if (getOrderItem(product.id!) != null) {
-                                        onDeletOrderItem(product.id!);
-                                      } else {
-                                        onAddOrderItem(product);
-                                      }
-                                      setStateEx(() {});
-                                    },
-                                    icon: getOrderItem(product.id!) == null
-                                        ? const Icon(Icons.add)
-                                        : const Icon(Icons.delete),
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ListView(
+                              children: [
+                                for (var product in products!)
+                                  Card(
+                                    child: ListTile(
+                                      subtitle: getOrderItem(product.id!) !=
+                                              null
+                                          ? 
+                                          FittedBox(
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  IconButton(
+                                                    onPressed: () {
+                                                      if (getOrderItem(
+                                                                  product.id!)!
+                                                              .productCount ==
+                                                          0) {
+                                                        return;
+                                                      }
+                                                      getOrderItem(product.id!)
+                                                              ?.productCount =
+                                                          getOrderItem(product
+                                                                      .id!)!
+                                                                  .productCount! -
+                                                              1;
+                                                      setStateEx(() {});
+                                                      setState(() {});
+                                                    },
+                                                    icon:
+                                                        const Icon(Icons.remove),
+                                                  ),
+                                                  Text(
+                                                    '${getOrderItem(product.id!)?.productCount}',
+                                                  ),
+                                                  IconButton(
+                                                    onPressed: () {
+                                                      if (getOrderItem(
+                                                                  product.id!)!
+                                                              .productCount ==
+                                                          getOrderItem(
+                                                                  product.id!)!
+                                                              .product!
+                                                              .stock) {
+                                                        return;
+                                                      }
+                                                      getOrderItem(product.id!)
+                                                              ?.productCount =
+                                                          getOrderItem(product
+                                                                      .id!)!
+                                                                  .productCount! +
+                                                              1;
+                                                      setStateEx(() {});
+                                                      setState(() {});
+                                                    },
+                                                    icon: const Icon(Icons.add),
+                                                  ),
+                                                ],
+                                              ),
+                                          )
+                                          : const SizedBox(),
+                                      title: Text(
+                                        product.name ?? 'No name',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                      leading: Image.network(
+                                        product.image ?? '',
+                                      ),
+                                      trailing: IconButton(
+                                        onPressed: () {
+                                          if (getOrderItem(product.id!) !=
+                                              null) {
+                                            onDeletOrderItem(product.id!);
+                                          } else {
+                                            onAddOrderItem(product);
+                                          }
+                                          setStateEx(() {});
+                                        },
+                                        icon: getOrderItem(product.id!) == null
+                                            ? const Icon(Icons.add)
+                                            : const Icon(Icons.delete),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: AppElevatedButton(
-                            label: 'Back',
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: AppElevatedButton(
+                              label: 'Add',
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
             );
           });

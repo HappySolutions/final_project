@@ -5,6 +5,7 @@ import 'package:final_project/models/rate.dart';
 import 'package:final_project/pages/all_sales_page.dart';
 import 'package:final_project/pages/categories_page.dart';
 import 'package:final_project/pages/clients_page.dart';
+import 'package:final_project/pages/database_page.dart';
 import 'package:final_project/pages/sale_ops_page.dart';
 import 'package:final_project/pages/products_page.dart';
 import 'package:final_project/widgets/header_item.dart';
@@ -57,7 +58,11 @@ class _HomePageState extends State<HomePage> {
           rates?.add(Rate.fromJson(item));
         }
       } else {
-        rates = [];
+        rates = [
+          Rate(usd: 1, egp: 50),
+          Rate(usd: 1, egp: 70),
+          Rate(usd: 1, egp: 30)
+        ];
       }
     } catch (e) {
       print('Error in get Rates $e');
@@ -91,7 +96,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: onSubmit),
+      // floatingActionButton: FloatingActionButton(onPressed: onSubmit),
       drawer: Drawer(
         backgroundColor: Colors.white,
         child: SingleChildScrollView(
@@ -215,6 +220,18 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                   ),
+                  ListTile(
+                    leading: const Icon(Icons.data_thresholding),
+                    title: const Text('Databse'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const DatabasePage()),
+                      );
+                    },
+                  ),
                 ],
               )
             ],
@@ -267,8 +284,8 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(
                             height: 20,
                           ),
-                          HeaderItem('Exchange Rate', '1USD =  Egp'),
-                          //${rates?[rndIndex].egp ?? 0}
+                          HeaderItem('Exchange Rate',
+                              '1USD = ${rates?[rndIndex].egp ?? 0} Egp'),
                           HeaderItem('Today\'s Sales', '$todaySale Egp'),
                         ],
                       ),
@@ -357,7 +374,7 @@ class _HomePageState extends State<HomePage> {
           conflictAlgorithm: ConflictAlgorithm.replace,
           {
             'usd': 1,
-            'egp': 30,
+            'egp': 70,
           });
 
       ScaffoldMessenger.of(context).showSnackBar(
