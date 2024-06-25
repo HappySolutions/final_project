@@ -54,46 +54,48 @@ class _SplashScreenState extends State<SplashScreen>
               borderRadius: BorderRadius.vertical(
                   bottom: Radius.circular(cartAnimated ? 40.0 : 0.0)),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Visibility(
-                  visible: !cartAnimated,
-                  child: Lottie.asset(
-                    'assets/lottie/shop.json',
-                    frameRate: FrameRate.max,
-                    height: 190.0,
-                    width: 190.0,
-                    controller: _cartController,
-                    onLoaded: (composition) {
-                      _cartController
-                        ..duration = composition.duration
-                        ..forward();
-                    },
-                  ),
-                ),
-                Visibility(
-                  visible: cartAnimated,
-                  child: Image.asset(
-                    'assets/lottie/cartpic.png',
-                    height: 190.0,
-                    width: 190.0,
-                  ),
-                ),
-                Center(
-                  child: AnimatedOpacity(
-                    opacity: animateCartText ? 1 : 0,
-                    duration: const Duration(seconds: 2),
-                    child: Text(
-                      ' P O S',
-                      style: TextStyle(
-                          fontSize: 50.0,
-                          color: Theme.of(context).primaryColor),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Visibility(
+                    visible: !cartAnimated,
+                    child: Lottie.asset(
+                      'assets/lottie/shop.json',
+                      frameRate: FrameRate.max,
+                      height: 190.0,
+                      width: 190.0,
+                      controller: _cartController,
+                      onLoaded: (composition) {
+                        _cartController
+                          ..duration = composition.duration
+                          ..forward();
+                      },
                     ),
                   ),
-                ),
-              ],
+                  Visibility(
+                    visible: cartAnimated,
+                    child: Image.asset(
+                      'assets/lottie/cartpic.png',
+                      height: 190.0,
+                      width: 190.0,
+                    ),
+                  ),
+                  Center(
+                    child: AnimatedOpacity(
+                      opacity: animateCartText ? 1 : 0,
+                      duration: const Duration(seconds: 2),
+                      child: Text(
+                        ' P O S',
+                        style: TextStyle(
+                            fontSize: 50.0,
+                            color: Theme.of(context).primaryColor),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
