@@ -1,7 +1,6 @@
 import 'package:final_project/helpers/sql_helper.dart';
 import 'package:final_project/models/order.dart';
 import 'package:final_project/models/order_item.dart';
-import 'package:final_project/models/pos_product.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -14,7 +13,7 @@ class ViewOrderPage extends StatefulWidget {
 }
 
 class _ViewOrderPageState extends State<ViewOrderPage> {
-  List<OrderItem>? selectedOrderItems;
+  List<OrderProducts>? selectedOrderItems;
 
   late double total;
   @override
@@ -29,7 +28,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
       var sqlHelper = GetIt.I.get<SqlHelper>();
 
       var data = await sqlHelper.db!.rawQuery("""
-      Select OPI.*, P.name as productName, P.price as productPrice from orderProductItems OPI
+      Select OPI.*, P.name as productName, P.price as productPrice, P.image as productImage from orderProductItems OPI
       Inner JOIN products P
       On OPI.productId = P.id
       """);
@@ -42,13 +41,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         selectedOrderItems = [];
 
         for (var item in data) {
-          selectedOrderItems?.add(OrderItem.fromJson(item));
+          selectedOrderItems?.add(OrderProducts.fromJson(item));
         }
-
-        var data2 = await sqlHelper.db!.rawQuery(
-            'SELECT * FROM products WHERE id=?',
-            [selectedOrderItems![0].productId]);
-        print(data2);
       } else {
         selectedOrderItems = [];
       }
@@ -70,26 +64,33 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Order Details:',
+              'Order Products:',
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
               ),
             ),
-            // for (var orderItem in selectedOrderItems ?? [])
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(vertical: 5),
-            //   child: Card(
-            //     child:
-            //     ListTile(
-            //       title: Text(
-            //           '${orderItem.product.name ?? 'No name'}, ${orderItem.productCount}X'),
-            //       leading: Image.network(orderItem.product.image ?? ''),
-            //       trailing: Text(
-            //           '${orderItem.productCount * orderItem.product.price}'),
-            //     ),
-            //   ),
-            // ),
+            for (var orderItem in selectedOrderItems ?? [])
+              if (orderItem.orderId == widget.order?.id)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Card(
+                    color: Colors.white60,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        title: Text(
+                            '${orderItem.productName ?? 'No name'}, ${orderItem.productCount}X'),
+                        leading: Image.network(orderItem.productImage ?? ''),
+                        trailing: Text(
+                            '${orderItem.productCount * orderItem.productPrice}'),
+                      ),
+                    ),
+                  ),
+                ),
+            const SizedBox(
+              height: 20,
+            ),
             Text(
               'Total Price: $total',
               style: const TextStyle(
