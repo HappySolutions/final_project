@@ -9,11 +9,13 @@ class AppTextFormFeild extends StatelessWidget {
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+  final void Function(String)? onChanged;
   const AppTextFormFeild(
       {this.labelText,
       this.controller,
       this.keyboardType,
       this.inputFormatters,
+      this.onChanged,
       this.validator,
       super.key});
 
@@ -24,6 +26,7 @@ class AppTextFormFeild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onChanged: onChanged,
       inputFormatters: inputFormatters,
       keyboardType: keyboardType,
       validator: validator,

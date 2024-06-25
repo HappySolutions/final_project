@@ -132,13 +132,13 @@ class _AllSalesPageState extends State<AllSalesPage> {
                     await onDeleteOrder(order);
                   },
                   onShow: (order) {
-                    getOrderProductItem(order.id!);
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => ViewOrderPage(
-                    //               order: order,
-                    //             )));
+                    // getOrderProductItem(order.id!);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ViewOrderPage(
+                                  order: order,
+                                )));
                     setState(() {});
                   },
                 ),

@@ -4,7 +4,6 @@ import 'package:final_project/models/pos_category.dart';
 import 'package:final_project/models/pos_product.dart';
 import 'package:final_project/pages/products_ops_page.dart';
 import 'package:final_project/widgets/app_table_widget.dart';
-import 'package:final_project/widgets/categories_drop_down_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -165,7 +164,7 @@ class _ProductsPageState extends State<ProductsPage> {
                                       value: _chosenCategory,
                                       isExpanded: true,
                                       underline: const SizedBox(),
-                                      hint: const Text('Select Category'),
+                                      hint: const Text('Filter By Category'),
                                       items: [
                                         for (var category in categories!)
                                           DropdownMenuItem<String>(

@@ -28,6 +28,9 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
   String? orderLabel;
   int? selectedClientId;
   late TextEditingController discountTextFeildController;
+  String prAfDis = '';
+  var discount = 0.0;
+
   void getProducts() async {
     try {
       var sqlHelper = GetIt.I.get<SqlHelper>();
@@ -35,8 +38,6 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
       Select P.*, C.name as categoryName, C.description as categoryDescription from products P
       Inner JOIN categories C
       On P.categoryId = C.id
-      
-      
       """);
       if (data.isNotEmpty) {
         products = [];
@@ -157,6 +158,7 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
                               child: InkWell(
                                 onTap: () async {
                                   await onDeleteItem(orderItem);
+                                  setState(() {});
                                 },
                                 child: ListTile(
                                   title: Text(
@@ -178,16 +180,30 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
                           const SizedBox(
                             height: 20,
                           ),
-                          SizedBox(
-                            width: 100,
-                            child: AppTextFormFeild(
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              labelText: 'Discount',
-                              controller: discountTextFeildController,
-                            ),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 100,
+                                child: AppTextFormFeild(
+                                  onChanged: (value) {
+                                    if (int.parse(value) > 0) {
+                                      setState(() {
+                                        discount = calcualteTotalPrice -
+                                            int.parse(value);
+                                        prAfDis = '$discount';
+                                      });
+                                    }
+                                  },
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  labelText: 'Discount',
+                                  controller: discountTextFeildController,
+                                ),
+                              ),
+                              Text(' = $prAfDis'),
+                            ],
                           ),
                           const SizedBox(
                             height: 20,
@@ -233,9 +249,8 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
                                     child: ListTile(
                                       subtitle: getOrderItem(product.id!) !=
                                               null
-                                          ? 
-                                          FittedBox(
-                                            child: Row(
+                                          ? FittedBox(
+                                              child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
                                                 children: [
@@ -254,10 +269,9 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
                                                                   .productCount! -
                                                               1;
                                                       setStateEx(() {});
-                                                      setState(() {});
                                                     },
-                                                    icon:
-                                                        const Icon(Icons.remove),
+                                                    icon: const Icon(
+                                                        Icons.remove),
                                                   ),
                                                   Text(
                                                     '${getOrderItem(product.id!)?.productCount}',
@@ -280,13 +294,12 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
                                                                   .productCount! +
                                                               1;
                                                       setStateEx(() {});
-                                                      setState(() {});
                                                     },
                                                     icon: const Icon(Icons.add),
                                                   ),
                                                 ],
                                               ),
-                                          )
+                                            )
                                           : const SizedBox(),
                                       title: Text(
                                         product.name ?? 'No name',
@@ -320,6 +333,7 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
                             child: AppElevatedButton(
                               label: 'Add',
                               onPressed: () {
+                                setStateEx(() {});
                                 Navigator.of(context).pop();
                               },
                             ),
@@ -401,7 +415,7 @@ class _SaleOpsPageState extends State<SaleOpsPage> {
         batch.insert('orderProductItems', {
           'orderId': orderId,
           'productId': orderItem.productId,
-          'productCount': 'orderItem.productCount'
+          'productCount': orderItem.productCount
         });
       }
       var result = await batch.commit();
