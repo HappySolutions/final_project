@@ -97,7 +97,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       //Just to Add some entries on the Exchange rate table
-      floatingActionButton: FloatingActionButton(onPressed: onSubmit),
+      // floatingActionButton: FloatingActionButton(onPressed: onSubmit),
       drawer: Drawer(
         backgroundColor: Colors.white,
         child: SingleChildScrollView(
