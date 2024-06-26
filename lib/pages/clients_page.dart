@@ -103,87 +103,91 @@ class _ClientsPageState extends State<ClientsPage> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: ListView.builder(
-                itemCount: clients?.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Slidable(
-                    startActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        extentRatio: 0.25,
-                        children: [
-                          Expanded(
-                            child: Card(
-                              color: Colors.white60,
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+              child: (clients!.isEmpty || clients == null)
+                  ? Text('No Clients Added Yet')
+                  : ListView.builder(
+                      itemCount: clients?.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return Slidable(
+                          startActionPane: ActionPane(
+                              motion: const ScrollMotion(),
+                              extentRatio: 0.25,
+                              children: [
+                                Expanded(
+                                  child: Card(
+                                    color: Colors.white60,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: InkWell(
+                                            child: Icon(
+                                              Icons.edit,
+                                              color: Colors.deepPurple,
+                                              size: 20,
+                                            ),
+                                            onTap: () async {
+                                              await onUpdateClient(
+                                                  clients![index]);
+                                            },
+                                          ),
+                                        ),
+                                        Divider(
+                                          height: 1,
+                                          color: Colors.deepPurple,
+                                        ),
+                                        Expanded(
+                                          child: InkWell(
+                                            child: Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                              size: 20,
+                                            ),
+                                            onTap: () async {
+                                              await onDeleteClient(
+                                                  clients![index]);
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                          child: Card(
+                            color: Colors.white60,
+                            child: ListTile(
+                              title: Text(
+                                '${clients?[index].name}',
+                                style: TextStyle(fontWeight: FontWeight.w700),
                               ),
-                              child: Column(
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Expanded(
-                                    child: InkWell(
-                                      child: Icon(
-                                        Icons.edit,
-                                        color: Colors.deepPurple,
-                                        size: 20,
-                                      ),
-                                      onTap: () async {
-                                        await onUpdateClient(clients![index]);
-                                      },
-                                    ),
-                                  ),
-                                  Divider(
-                                    height: 1,
-                                    color: Colors.deepPurple,
-                                  ),
-                                  Expanded(
-                                    child: InkWell(
-                                      child: Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                        size: 20,
-                                      ),
-                                      onTap: () async {
-                                        await onDeleteClient(clients![index]);
-                                      },
-                                    ),
+                                  Text('${clients?[index].email}'),
+                                  Text('${clients?[index].address}'),
+                                  Text(
+                                    '${clients?[index].phone}',
+                                    style: TextStyle(fontSize: 12),
                                   ),
                                 ],
                               ),
+                              trailing: const CircleAvatar(
+                                radius: 50,
+                                backgroundImage: NetworkImage(
+                                    'https://avatar.iran.liara.run/public'),
+                              ),
                             ),
                           ),
-                        ]),
-                    child: Card(
-                      color: Colors.white60,
-                      child: ListTile(
-                        title: Text(
-                          '${clients?[index].name}',
-                          style: TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('${clients?[index].email}'),
-                            Text('${clients?[index].address}'),
-                            Text(
-                              '${clients?[index].phone}',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        trailing: const CircleAvatar(
-                          radius: 50,
-                          backgroundImage: NetworkImage(
-                              'https://avatar.iran.liara.run/public'),
-                        ),
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
               // AppTable(
               //   minWidth: 800,
               //   columns: const [
